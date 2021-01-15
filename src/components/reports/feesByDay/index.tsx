@@ -5,7 +5,8 @@ import React from 'react';
 import { Table, Input } from 'antd';
 
 const { Search } = Input;
-class FeeReportContainer extends React.Component {
+
+class FeeByDayReportContainer extends React.Component {
   _isMounted = false;
 
   constructor(props: any) {
@@ -17,6 +18,7 @@ class FeeReportContainer extends React.Component {
       limit: 10,
       total: 0,
       loading: true,
+      search: {},
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -35,24 +37,37 @@ class FeeReportContainer extends React.Component {
   }
 
   onSearch(value: string) {
-    const { page, limit } = this.state;
-    let search = { seq: parseInt(value, 10) };
-
-    if ([null, undefined, NaN].includes(search.seq)) {
+    let search;
+    if (![null, undefined, ''].includes(value)) {
+      const startDate = new Date(value);
+      const endDate = new Date(startDate.getTime() + 60 * 60 * 24 * 1000);
+      search = {
+        createdAt: {
+          $gte: new Date(startDate).toISOString(),
+          $lt: new Date(endDate).toISOString(),
+        },
+      };
+    } else {
       search = {};
     }
 
-    this.getFees({
-      page,
-      limit,
-      search,
+    this.setState((state, props) => {
+      this.getFees({
+        page: state.page,
+        limit: state.limit,
+        search,
+      });
+
+      return {
+        search,
+      };
     });
   }
 
   getFees = ({
     page = this.state.page,
     limit = this.state.limit,
-    search = {},
+    search = this.state.search,
   }) => {
     this.setState({
       loading: true,
@@ -139,6 +154,7 @@ class FeeReportContainer extends React.Component {
     return (
       <>
         <Search
+          type="date"
           placeholder="Secuencia"
           onSearch={this.onSearch}
           enterButton
@@ -157,4 +173,4 @@ class FeeReportContainer extends React.Component {
   }
 }
 
-export default FeeReportContainer;
+export default FeeByDayReportContainer;

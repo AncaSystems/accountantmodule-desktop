@@ -1,5 +1,6 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Link } from 'react-router-dom';
+import { Table, Space } from 'antd';
 
 class UserContainer extends React.Component {
   _isMounted = false;
@@ -34,7 +35,7 @@ class UserContainer extends React.Component {
       loading: true,
     });
     this.props.API.Users()
-      .getUsers({}, { page, limit })
+      .getUsers({ _enabled: true }, { page, limit })
       .then((response) => {
         this.setState({
           users: response.results.filter((user) => user._enabled),
@@ -77,6 +78,16 @@ class UserContainer extends React.Component {
         title: 'Nombre Usuario',
         dataIndex: 'username',
         key: 'username',
+      },
+      {
+        title: 'Acciones',
+        key: 'action',
+        render: (text, record) => (
+          <Space size="middle">
+            <Link to={`/user/${record.id}/update`}>Modificar</Link>
+            <Link to={`/user/${record.id}/delete`}>Eliminar</Link>
+          </Space>
+        ),
       },
     ];
 

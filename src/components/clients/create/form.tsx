@@ -46,8 +46,8 @@ const RegistrationForm = (props) => {
       onFinish={onFinish}
       scrollToFirstError
     >
-      <Row>
-        <Col span={10} offset={3}>
+      <Row gutter={[16,24]}>
+        <Col span={10} offset={1}>
           <Form.Item
             name="identification"
             label={<span>identificación</span>}
@@ -161,7 +161,7 @@ const RegistrationForm = (props) => {
           type="primary"
           htmlType="submit"
         >
-          Crear usuario
+          Crear cliente
         </Button>
       </Form.Item>
     </Form>

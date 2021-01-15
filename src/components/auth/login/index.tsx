@@ -22,9 +22,10 @@ class SingUpContainer extends React.Component {
       .Login(username, password)
       .then((response: any) => {
         this.props.setUser(response);
-        this.props.setSelectedKey(1);
       })
-      .catch((error: any) => console.error(error));
+      .catch((error: any) => {
+        return error;
+      });
   };
 
   render() {

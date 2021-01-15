@@ -2,10 +2,11 @@
 /* eslint-disable promise/no-nesting */
 /* eslint-disable promise/always-return */
 import React from 'react';
-import { Table, Input } from 'antd';
+import { Table, DatePicker } from 'antd';
 
-const { Search } = Input;
-class FeeReportContainer extends React.Component {
+const { RangePicker } = DatePicker;
+
+class FeeByDateRangeReportContainer extends React.Component {
   _isMounted = false;
 
   constructor(props: any) {
@@ -17,6 +18,7 @@ class FeeReportContainer extends React.Component {
       limit: 10,
       total: 0,
       loading: true,
+      search: {},
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -34,25 +36,36 @@ class FeeReportContainer extends React.Component {
     this._isMounted = false;
   }
 
-  onSearch(value: string) {
-    const { page, limit } = this.state;
-    let search = { seq: parseInt(value, 10) };
-
-    if ([null, undefined, NaN].includes(search.seq)) {
+  onSearch(value: any) {
+    let search;
+    if (Array.isArray(value)) {
+      search = {
+        createdAt: {
+          $gte: value[0].format('MM/DD/yyyy'),
+          $lt: value[1].format('MM/DD/yyyy'),
+        },
+      };
+    } else {
       search = {};
     }
 
-    this.getFees({
-      page,
-      limit,
-      search,
+    this.setState((state, props) => {
+      this.getFees({
+        page: state.page,
+        limit: state.limit,
+        search,
+      });
+
+      return {
+        search,
+      };
     });
   }
 
   getFees = ({
     page = this.state.page,
     limit = this.state.limit,
-    search = {},
+    search = this.state.search,
   }) => {
     this.setState({
       loading: true,
@@ -138,12 +151,7 @@ class FeeReportContainer extends React.Component {
 
     return (
       <>
-        <Search
-          placeholder="Secuencia"
-          onSearch={this.onSearch}
-          enterButton
-          style={{ marginBottom: '5px' }}
-        />
+        <RangePicker onChange={this.onSearch} style={{ width: '100%' }} />
         <Table
           size="middle"
           columns={columns}
@@ -157,4 +165,4 @@ class FeeReportContainer extends React.Component {
   }
 }
 
-export default FeeReportContainer;
+export default FeeByDateRangeReportContainer;

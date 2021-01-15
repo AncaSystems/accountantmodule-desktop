@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Form, Input, Tooltip, Button } from 'antd';
+import { Form, Input, Tooltip, Button, Select } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+
+const { Option } = Select;
 
 const formItemLayout = {
   labelCol: {
@@ -30,7 +32,7 @@ const RegistrationForm = (props) => {
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
-  const { onCreate } = props;
+  const { onCreate, permissions } = props;
 
   const onFinish = (values: any) => {
     setDisabled(true);
@@ -139,6 +141,28 @@ const RegistrationForm = (props) => {
         rules={[{ required: false, message: 'Por favor ingrese un telefono!' }]}
       >
         <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="permissions"
+        label="Permisos"
+        rules={[
+          {
+            required: true,
+            message: 'Por favor seleccione los permisos del usuario!',
+          },
+        ]}
+      >
+        <Select
+          mode="multiple"
+          placeholder="Por favor seleccione los permisos del usuario"
+        >
+          {permissions.map(({ id, name, description }) => (
+            <Option key={`permission-${id}`} value={id}>
+              {description}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
 
       <Form.Item {...tailFormItemLayout}>

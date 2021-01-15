@@ -1,11 +1,10 @@
-/* eslint-disable promise/catch-or-return */
-/* eslint-disable promise/no-nesting */
-/* eslint-disable promise/always-return */
 import React from 'react';
-import { Table, Input } from 'antd';
+import { Table, Select } from 'antd';
+import Search from 'antd/lib/input/Search';
 
-const { Search } = Input;
-class FeeReportContainer extends React.Component {
+const { Option } = Select;
+
+class FeesByClientsContainer extends React.Component {
   _isMounted = false;
 
   constructor(props: any) {
@@ -13,6 +12,7 @@ class FeeReportContainer extends React.Component {
 
     this.state = {
       fees: [],
+      clients: [],
       page: 1,
       limit: 10,
       total: 0,
@@ -26,7 +26,7 @@ class FeeReportContainer extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     if (this._isMounted) {
-      this.getFees({});
+      this.getClients({});
     }
   }
 
@@ -36,34 +36,29 @@ class FeeReportContainer extends React.Component {
 
   onSearch(value: string) {
     const { page, limit } = this.state;
-    let search = { seq: parseInt(value, 10) };
-
-    if ([null, undefined, NaN].includes(search.seq)) {
-      search = {};
-    }
-
-    this.getFees({
-      page,
-      limit,
-      search,
-    });
+    this.getFees({ page: 0, limit, search: { client: value } });
   }
 
-  getFees = ({
-    page = this.state.page,
-    limit = this.state.limit,
-    search = {},
-  }) => {
+  getClients = ({ limit = 1000, search = {} }) => {
     this.setState({
       loading: true,
     });
+    this.props.API.Clients()
+      .getClients(search, { limit })
+      .then((response) => {
+        this.setState({
+          clients: response.results.map(this.mapClientResults),
+        });
+      })
+      .catch((error) => console.error(error));
+  };
+
+  getFees = ({ limit, page, search }) => {
     this.props.API.Fees()
       .getFees(search, { page, limit })
       // eslint-disable-next-line promise/always-return
       .then((response) => {
-        const feesPromises = response.results.map(async (fee) => {
-          const client = await this.props.API.Clients().getClient(fee.client);
-
+        const fees = response.results.map((fee) => {
           return {
             seq: fee.seq,
             value: Intl.NumberFormat('es-CO', {
@@ -75,25 +70,31 @@ class FeeReportContainer extends React.Component {
               style: 'currency',
               currency: 'COP',
             }).format(fee.commission),
-            client: client.name,
             cancelled: fee._enabled ? 'No' : 'Sí',
           };
         });
 
-        Promise.all(feesPromises).then((fees) => {
-          this.setState({
-            fees,
-            total: response.totalResults,
-            loading: false,
-          });
+        this.setState({
+          fees,
+          total: response.totalResults,
+          loading: false,
+          page
         });
       })
       .catch((error) => console.error(error));
   };
 
+  // eslint-disable-next-line class-methods-use-this
+  mapClientResults(client: any) {
+    return {
+      name: client.name,
+      id: client.id,
+    };
+  }
+
   handlePaginationChange(page: number, pageSize: number) {
     this.setState((state, props) => {
-      this.getFees({ page, limit: pageSize });
+      this.getClients({ page, limit: pageSize });
       return {
         page,
         limit: pageSize,
@@ -102,7 +103,7 @@ class FeeReportContainer extends React.Component {
   }
 
   render() {
-    const { fees, loading, total } = this.state;
+    const { clients, fees, loading, total } = this.state;
     const columns = [
       {
         title: 'Secuencia',
@@ -113,11 +114,6 @@ class FeeReportContainer extends React.Component {
         title: 'Cancelado',
         dataIndex: 'cancelled',
         key: 'cancelled',
-      },
-      {
-        title: 'Cliente',
-        dataIndex: 'client',
-        key: 'client',
       },
       {
         title: 'Valor',
@@ -138,18 +134,28 @@ class FeeReportContainer extends React.Component {
 
     return (
       <>
-        <Search
-          placeholder="Secuencia"
-          onSearch={this.onSearch}
-          enterButton
-          style={{ marginBottom: '5px' }}
-        />
+        <Select
+          showSearch
+          style={{ width: '100%' }}
+          onChange={this.onSearch}
+          placeholder="Selecione un cliente"
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+        >
+          {clients.map(({ name, id }) => (
+            <Option key={`client-${id}`} value={id}>
+              {name}
+            </Option>
+          ))}
+        </Select>
         <Table
           size="middle"
           columns={columns}
           dataSource={fees}
           loading={loading}
-          scroll={{ y: 500 }}
+          scroll={{ y: 450 }}
           pagination={{ total, onChange: this.handlePaginationChange }}
         />
       </>
@@ -157,4 +163,4 @@ class FeeReportContainer extends React.Component {
   }
 }
 
-export default FeeReportContainer;
+export default FeesByClientsContainer;

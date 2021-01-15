@@ -48,23 +48,15 @@ class Sidebar extends React.Component {
                 Crear Usuarios
               </Link>
             </Menu.Item>
-
-            <SubMenu icon={<LockOutlined />} title="Permisos">
-              <Menu.Item key="16">
-                <Link to="/assing-permissions" style={{ fontSize: '0.9em' }}>
-                  Asignar Permisos
-                </Link>
-              </Menu.Item>
-            </SubMenu>
           </SubMenu>
 
           <SubMenu icon={<UsergroupAddOutlined />} title="Clientes">
             <Menu.Item key="2">
               <Link to="/clients" style={{ fontSize: '0.9em' }}>
-                Clients
+                Clientes
               </Link>
             </Menu.Item>
-            <Menu.Item key="15">
+            <Menu.Item key="16">
               <Link to="/clients-register" style={{ fontSize: '0.9em' }}>
                 Registro de clientes
               </Link>

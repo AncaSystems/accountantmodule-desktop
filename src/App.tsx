@@ -13,6 +13,9 @@ import ClientContainer from './components/clients';
 import CreateClientContainer from './components/clients/create';
 import UserContainer from './components/users';
 import FeeReportContainer from './components/reports/fees';
+import FeeByDayReportContainer from './components/reports/feesByDay';
+import FeeByDateRangeReportContainer from './components/reports/feesByDateRange';
+import FeeByClientsRangeReportContainer from './components/reports/feesByClient';
 import SingUpContainer from './components/auth/singup';
 import LoginContainer from './components/auth/login';
 import LogOutContainer from './components/auth/logout';
@@ -26,7 +29,6 @@ const { Content, Header } = Layout;
 export default function App() {
   const [theme = 'dark', setTheme] = useState();
   const [user, setUser] = useState();
-
 
   const changeTheme = (value) => {
     setTheme(value ? 'dark' : 'light');
@@ -83,6 +85,20 @@ export default function App() {
                 <Route
                   path="/report-payment"
                   component={() => <FeeReportContainer API={API} />}
+                />
+                <Route
+                  path="/report-payment-by-day"
+                  component={() => <FeeByDayReportContainer API={API} />}
+                />
+                <Route
+                  path="/report-payment-by-day-range"
+                  component={() => <FeeByDateRangeReportContainer API={API} />}
+                />
+                <Route
+                  path="/report-payment-by-client"
+                  component={() => (
+                    <FeeByClientsRangeReportContainer API={API} />
+                  )}
                 />
                 <Route
                   path="/logout"

@@ -82,9 +82,18 @@ class ClientContainer extends React.Component {
         active: client._enabled ? 'Sí' : 'No',
         loanDate: new Date(loan.since).toLocaleDateString(),
         paymentType: loan.loanType.name,
-        seed: seed.toFixed(2),
-        performance: (seed * (loan.tax / 100)).toFixed(2),
-        value: (seed + seed * (loan.tax / 100)).toFixed(2),
+        seed: Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+        }).format(seed),
+        performance: Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+        }).format(seed * (loan.tax / 100)),
+        value: Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+        }).format(seed + seed * (loan.tax / 100)),
         codebtName: client.CoDebtName,
         codebtAddress: client.CoDebtAddress,
         codebtPhone: client.CoDebtPhone,
@@ -173,7 +182,7 @@ class ClientContainer extends React.Component {
           placeholder="Nombre Cliente"
           onSearch={this.onSearch}
           enterButton
-          style={{ marginBottom: '5px'}}
+          style={{ marginBottom: '5px' }}
         />
         <Table
           size="middle"
