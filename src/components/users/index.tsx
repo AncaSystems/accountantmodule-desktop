@@ -1,11 +1,24 @@
+/* eslint-disable promise/always-return */
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Space } from 'antd';
+import { Table, Space, Button } from 'antd';
+import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 
-class UserContainer extends React.Component {
+interface Props {
+  API: AccountantModule;
+}
+
+interface State {
+  users: any[];
+  page: number;
+  limit: number;
+  total: number;
+  loading: boolean;
+}
+class UserContainer extends React.Component<Props, State> {
   _isMounted = false;
 
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -48,7 +61,7 @@ class UserContainer extends React.Component {
 
   handlePaginationChange(page: number, pageSize: number) {
     this.setState((state, props) => {
-      this.getClients({ page, limit: pageSize });
+      this.getUsers({ page, limit: pageSize });
       return {
         page,
         limit: pageSize,
@@ -58,6 +71,7 @@ class UserContainer extends React.Component {
 
   render() {
     const { users, loading, total } = this.state;
+    const { API } = this.props;
     const columns = [
       {
         title: 'Nombre',
@@ -85,7 +99,19 @@ class UserContainer extends React.Component {
         render: (text, record) => (
           <Space size="middle">
             <Link to={`/user/${record.id}/update`}>Modificar</Link>
-            <Link to={`/user/${record.id}/delete`}>Eliminar</Link>
+            <Button
+              type="link"
+              onClick={() => {
+                API.Users()
+                  .deleteUser(record.id)
+                  .then((result) => {
+                    this.getUsers({});
+                  })
+                  .catch((err) => console.error(err));
+              }}
+            >
+              Eliminar
+            </Button>
           </Space>
         ),
       },

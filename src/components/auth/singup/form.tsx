@@ -1,6 +1,8 @@
+/* eslint-disable promise/always-return */
 import React, { useState } from 'react';
 import { Form, Input, Tooltip, Button, Select } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 
 const { Option } = Select;
 
@@ -28,16 +30,31 @@ const tailFormItemLayout = {
   },
 };
 
-const RegistrationForm = (props) => {
+interface Props {
+  API: AccountantModule;
+  permissions: any[];
+}
+
+const RegistrationForm = ({ API, permissions }: Props) => {
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
-  const { onCreate, permissions } = props;
+
+  const createUsers = ({ username, password, name, phone, address, permissions }) => {
+    API.Auth()
+      .SingUp({ username, password, name, phone, address, permissions })
+      .then((response: any) => {
+        setDisabled(false);
+        setloading(false);
+        form.resetFields();
+      })
+      .catch((error: any) => console.error(error));
+  };
 
   const onFinish = (values: any) => {
     setDisabled(true);
     setloading(true);
-    onCreate(values);
+    createUsers(values);
   };
 
   return (

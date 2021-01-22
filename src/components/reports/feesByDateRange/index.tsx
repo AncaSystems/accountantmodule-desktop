@@ -2,7 +2,9 @@
 /* eslint-disable promise/no-nesting */
 /* eslint-disable promise/always-return */
 import React from 'react';
-import { Table, DatePicker } from 'antd';
+import { Table, DatePicker, Row, Col, Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import SaveReport from '../../../helpers/saveReports';
 
 const { RangePicker } = DatePicker;
 
@@ -19,10 +21,13 @@ class FeeByDateRangeReportContainer extends React.Component {
       total: 0,
       loading: true,
       search: {},
+      gte: new Date(),
+      lt: new Date(),
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
     this.onSearch = this.onSearch.bind(this);
+    this.downloadReport = this.downloadReport.bind(this);
   }
 
   componentDidMount() {
@@ -45,6 +50,10 @@ class FeeByDateRangeReportContainer extends React.Component {
           $lt: value[1].format('MM/DD/yyyy'),
         },
       };
+      this.setState({
+        gte: search.createdAt.$gte,
+        lt: search.createdAt.$lt,
+      });
     } else {
       search = {};
     }
@@ -114,6 +123,20 @@ class FeeByDateRangeReportContainer extends React.Component {
     });
   }
 
+  downloadReport(event) {
+    const { gte, lt } = this.state;
+    this.props.API.Reports()
+      .getFeeReport({
+        gte,
+        lt,
+        description: `Cobros por Rango de Fecha`,
+      })
+      .then((response) => {
+        SaveReport(response, 'cobrosPorRangoDeFecha.pdf');
+      })
+      .catch((err) => console.error(err));
+  }
+
   render() {
     const { fees, loading, total } = this.state;
     const columns = [
@@ -151,7 +174,16 @@ class FeeByDateRangeReportContainer extends React.Component {
 
     return (
       <>
-        <RangePicker onChange={this.onSearch} style={{ width: '100%' }} />
+        <Row>
+          <Col span={22}>
+            <RangePicker onChange={this.onSearch} style={{ width: '100%' }} />
+          </Col>
+          <Col span={1}>
+            <Button icon={<DownloadOutlined />} onClick={this.downloadReport}>
+              Descargar
+            </Button>
+          </Col>
+        </Row>
         <Table
           size="middle"
           columns={columns}

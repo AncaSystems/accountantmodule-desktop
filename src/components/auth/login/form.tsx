@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import AccountantModule from '@andresmorelos/accountantmodule-sdk';
+
+const { Password } = Input;
 
 const formItemLayout = {
   labelCol: {
@@ -13,61 +16,94 @@ const formItemLayout = {
   },
 };
 
-const LoginForm = (props) => {
+interface Props {
+  API: AccountantModule;
+  setUser(user: any): any;
+}
+
+const LoginForm = ({ API, setUser }: Props) => {
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
-  const { action } = props;
+  const [hide = true, setHide ] = useState();
 
-  const onFinish = (values: any) => {
+  const Login = ({ username, password }) => {
     setDisabled(true);
     setloading(true);
-    const { username, password } = values;
-    action(username, password);
+    setHide(true);
+    API.Auth()
+      .Login(username, password)
+      .then((response: any) => {
+        setUser(response);
+        setDisabled(false);
+        setloading(false);
+        return undefined;
+      })
+      .catch((error: any) => {
+        setDisabled(false);
+        setloading(false);
+        setHide(false);
+        return error;
+      });
   };
 
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      name="normal_login"
-      className="login-form"
-      title="Iniciar Sesión"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-    >
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
+    <>
+      <Form
+        {...formItemLayout}
+        form={form}
+        name="normal_login"
+        className="login-form"
+        title="Iniciar Sesión"
+        initialValues={{ remember: true }}
+        onFinish={Login}
       >
-        <Input
-          prefix={<UserOutlined className="site-form-item-icon" />}
-          placeholder="Usuario"
-        />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: 'Please input your Password!' }]}
-      >
-        <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
-          type="password"
-          placeholder="Contraseña"
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Button
-          loading={loading}
-          disabled={disabled}
-          type="primary"
-          htmlType="submit"
-          className="login-form-button"
+        <Form.Item className={hide ? 'hide' : ''}>
+          <Alert
+            message="Usuario o contraseña invalida"
+            type="error"
+            showIcon
+          />
+        </Form.Item>
+        <Form.Item
+          name="username"
+          rules={[
+            {
+              required: true,
+              message: 'Por favor ingrese su nombre de usuario!',
+            },
+          ]}
         >
-          Iniciar Sesión
-        </Button>
-      </Form.Item>
-    </Form>
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Usuario"
+          />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[
+            { required: true, message: 'Por favor ingrese su contraseña' },
+          ]}
+        >
+          <Password
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Contraseña"
+          />
+        </Form.Item>
+        <Form.Item>
+          <Button
+            loading={loading}
+            disabled={disabled}
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            Iniciar Sesión
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 };
 export default LoginForm;

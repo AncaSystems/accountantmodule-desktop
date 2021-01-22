@@ -6,18 +6,19 @@ import RegistrationForm from './form';
 
 interface Props {
   API: AccountantModule;
+  user: any;
 }
-class CreateClientContainer extends React.Component<Props> {
+class CreateFeeContainer extends React.Component<Props> {
   componentDidMount() {}
 
   render() {
-    const { API } = this.props;
+    const { API, user } = this.props;
     return (
       <Card style={{ textAlign: 'center' }}>
-        <RegistrationForm API={API} />
+        <RegistrationForm API={API} user={user} />
       </Card>
     );
   }
 }
 
-export default CreateClientContainer;
+export default CreateFeeContainer;

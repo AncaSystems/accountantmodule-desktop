@@ -1,10 +1,9 @@
 /* eslint-disable promise/always-return */
 import React from 'react';
-import { Table, Input, Space, Button, notification } from 'antd';
-import { Link } from 'react-router-dom';
+import { Table, Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
-
-const { Search } = Input;
+import SaveReport from '../../../helpers/saveReports';
 
 interface Props {
   API: AccountantModule;
@@ -33,6 +32,7 @@ class ClientContainer extends React.Component<Props, State> {
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
     this.onSearch = this.onSearch.bind(this);
+    this.downloadReport = this.downloadReport.bind(this);
   }
 
   componentDidMount() {
@@ -80,10 +80,15 @@ class ClientContainer extends React.Component<Props, State> {
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
       let payments = 0;
+      let seq1 = 0;
+      let seq2 = 0;
+      let value1 = 0;
+      let value2 = 0;
 
       if (loan.fees.length > 0) {
-        payments = loan.fees.reduce((accumulator: number, _fee: any) => {
-           if (_fee._enabled) {
+        loan.fees = loan.fees.filter((fee) => fee._enabled);
+        payments = loan.fees.reduce((accumulator, _fee) => {
+          if (_fee._enabled) {
             return accumulator + _fee.value;
           }
           return accumulator;
@@ -92,20 +97,26 @@ class ClientContainer extends React.Component<Props, State> {
 
       const seed = loan.value - payments;
 
+      if (Array.isArray(loan.fees) && loan.fees.length === 1) {
+        seq1 = loan.fees[0].seq;
+        value1 = loan.fees[0].value;
+      } else if (loan.fees.length > 1) {
+        seq1 = loan.fees[0].seq;
+        value1 = loan.fees[0].value;
+        seq2 = loan.fees[1].seq;
+        value2 = loan.fees[1].value;
+      }
+
       return {
         id: client.id,
-        name: client.name,
         work: client.work,
+        name: client.name,
         phone: client.phone,
-        active: client._enabled ? 'Sí' : 'No',
-        enabled: client._enabled,
         loanDate: new Date(loan.since).toLocaleDateString(),
-        paymentType: loan.loanType.name,
         seed: Intl.NumberFormat('es-CO', {
           style: 'currency',
           currency: 'COP',
         }).format(seed),
-        seedValue: seed,
         performance: Intl.NumberFormat('es-CO', {
           style: 'currency',
           currency: 'COP',
@@ -114,9 +125,16 @@ class ClientContainer extends React.Component<Props, State> {
           style: 'currency',
           currency: 'COP',
         }).format(seed + seed * (loan.tax / 100)),
-        codebtName: client.CoDebtName,
-        codebtAddress: client.CoDebtAddress,
-        codebtPhone: client.CoDebtPhone,
+        seq1,
+        fee1: Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+        }).format(value1),
+        seq2,
+        fee2: Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+        }).format(value2),
       };
     }
   }
@@ -129,6 +147,15 @@ class ClientContainer extends React.Component<Props, State> {
         limit: pageSize,
       };
     });
+  }
+
+  downloadReport(event) {
+    this.props.API.Reports()
+      .getClientsOverview()
+      .then((response) => {
+        SaveReport(response, 'ListadoDeClientes.pdf');
+      })
+      .catch((err) => console.error(err));
   }
 
   render() {
@@ -151,19 +178,9 @@ class ClientContainer extends React.Component<Props, State> {
         key: 'phone',
       },
       {
-        title: 'Activo',
-        dataIndex: 'active',
-        key: 'active',
-      },
-      {
         title: 'Fecha Prestamo',
         dataIndex: 'loanDate',
         key: 'loanDate',
-      },
-      {
-        title: 'Tipo de pago',
-        dataIndex: 'paymentType',
-        key: 'paymentType',
       },
       {
         title: 'Semilla',
@@ -181,67 +198,30 @@ class ClientContainer extends React.Component<Props, State> {
         key: 'value',
       },
       {
-        title: 'Codeudor',
-        dataIndex: 'codebtName',
-        key: 'codebtName',
+        title: 'Secuencia',
+        dataIndex: 'seq1',
+        key: 'seq1',
       },
       {
-        title: 'Dirección Codeudor',
-        dataIndex: 'codebtAddress',
-        key: 'codebtAddress',
+        title: 'Cobro',
+        dataIndex: 'fee1',
+        key: 'fee1',
       },
       {
-        title: 'Telefono Codeudor',
-        dataIndex: 'codebtPhone',
-        key: 'codebtPhone',
+        title: 'Secuencia',
+        dataIndex: 'seq2',
+        key: 'seq2',
       },
       {
-        title: 'Acciones',
-        key: 'action',
-        render: (text, record) => (
-          <Space size="middle">
-            <Link to={`/client/${record.id}/update`}>Modificar</Link>
-            <Button
-              type="link"
-              onClick={() => {
-                if (!record.enabled) {
-                  notification.info({
-                    message: 'No se pudo eliminar el cliente',
-                    description: 'El cliente no se encuentra activo.',
-                  });
-                  return;
-                }
-                if (record.seedValue === 0) {
-                  API.Clients()
-                    .deleteClient(record.id)
-                    .then((result) => {
-                      this.getClients({});
-                    })
-                    .catch((err) => console.error(err));
-                } else {
-                  notification.error({
-                    message: 'No se pudo eliminar el cliente',
-                    description:
-                      'La semilla del cliente deber ser igual a cero ($ 0,00) para poder ser eliminado.',
-                  });
-                }
-              }}
-            >
-              Eliminar
-            </Button>
-          </Space>
-        ),
+        title: 'Cobro',
+        dataIndex: 'fee2',
+        key: 'fee2',
       },
     ];
 
     return (
       <>
-        <Search
-          placeholder="Nombre Cliente"
-          onSearch={this.onSearch}
-          enterButton
-          style={{ marginBottom: '5px' }}
-        />
+        <Button icon={<DownloadOutlined />} onClick={this.downloadReport}>Descargar</Button>
         <Table
           size="middle"
           columns={columns}

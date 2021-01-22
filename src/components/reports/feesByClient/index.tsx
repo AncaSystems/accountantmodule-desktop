@@ -1,6 +1,5 @@
 import React from 'react';
 import { Table, Select } from 'antd';
-import Search from 'antd/lib/input/Search';
 
 const { Option } = Select;
 
@@ -17,6 +16,7 @@ class FeesByClientsContainer extends React.Component {
       limit: 10,
       total: 0,
       loading: true,
+      currentClient: undefined,
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -36,7 +36,10 @@ class FeesByClientsContainer extends React.Component {
 
   onSearch(value: string) {
     const { page, limit } = this.state;
-    this.getFees({ page: 0, limit, search: { client: value } });
+    this.getFees({ page: 1, limit, search: { client: value } });
+    this.setState({
+      currentClient: value,
+    });
   }
 
   getClients = ({ limit = 1000, search = {} }) => {
@@ -78,7 +81,7 @@ class FeesByClientsContainer extends React.Component {
           fees,
           total: response.totalResults,
           loading: false,
-          page
+          page,
         });
       })
       .catch((error) => console.error(error));
@@ -94,7 +97,13 @@ class FeesByClientsContainer extends React.Component {
 
   handlePaginationChange(page: number, pageSize: number) {
     this.setState((state, props) => {
-      this.getClients({ page, limit: pageSize });
+      this.getFees({
+        page,
+        limit: pageSize,
+        search: {
+          client: state.currentClient,
+        },
+      });
       return {
         page,
         limit: pageSize,
@@ -103,7 +112,7 @@ class FeesByClientsContainer extends React.Component {
   }
 
   render() {
-    const { clients, fees, loading, total } = this.state;
+    const { clients, fees, loading, total, page } = this.state;
     const columns = [
       {
         title: 'Secuencia',
@@ -156,7 +165,11 @@ class FeesByClientsContainer extends React.Component {
           dataSource={fees}
           loading={loading}
           scroll={{ y: 450 }}
-          pagination={{ total, onChange: this.handlePaginationChange }}
+          pagination={{
+            total,
+            onChange: this.handlePaginationChange,
+            current: page,
+          }}
         />
       </>
     );

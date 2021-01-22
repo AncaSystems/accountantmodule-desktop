@@ -1,34 +1,17 @@
 /* eslint-disable promise/always-return */
+import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import React from 'react';
 import LoginForm from './form';
 
-class SingUpContainer extends React.Component {
-  _isMounted = false;
-
-  constructor(props: any) {
-    super(props);
-  }
-
-  componentDidMount() {
-    this._isMounted = true;
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
-  Login = (username, password) => {
-    this.props.API.Auth()
-      .Login(username, password)
-      .then((response: any) => {
-        this.props.setUser(response);
-      })
-      .catch((error: any) => {
-        return error;
-      });
-  };
+interface Props {
+  API: AccountantModule;
+  setUser(user: any): void;
+}
+class SingUpContainer extends React.Component<Props> {
+  componentDidMount() {}
 
   render() {
+    const { API, setUser } = this.props;
     return (
       <div
         style={{
@@ -38,7 +21,7 @@ class SingUpContainer extends React.Component {
           height: '100vh',
         }}
       >
-        <LoginForm action={this.Login} />
+        <LoginForm API={API} setUser={setUser} />
       </div>
     );
   }

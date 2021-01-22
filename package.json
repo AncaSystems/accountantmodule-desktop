@@ -166,6 +166,7 @@
     "@testing-library/react": "^11.2.2",
     "@types/enzyme": "^3.10.5",
     "@types/enzyme-adapter-react-16": "^1.0.6",
+    "@types/file-saver": "^2.0.1",
     "@types/history": "4.7.6",
     "@types/jest": "^26.0.15",
     "@types/node": "14.14.10",
@@ -236,12 +237,14 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
-    "@andresmorelos/accountantmodule-sdk": "1.1.4",
+    "@andresmorelos/accountantmodule-sdk": "1.1.19",
     "antd": "^4.9.4",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
+    "file-saver": "^2.0.5",
     "history": "^5.0.0",
+    "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
@@ -278,8 +281,6 @@
     ]
   },
   "husky": {
-    "hooks": {
-
-    }
+    "hooks": {}
   }
 }

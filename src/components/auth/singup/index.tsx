@@ -25,15 +25,6 @@ class SingUpContainer extends React.Component {
     this._isMounted = false;
   }
 
-  createUsers = ({ username, password, name, phone, address, permissions }) => {
-    this.props.API.Auth()
-      .SingUp({ username, password, name, phone, address, permissions })
-      .then((response: any) => {
-        console.log(response);
-      })
-      .catch((error: any) => console.error(error));
-  };
-
   getPermissions = () => {
     this.props.API.Permissions()
       .getPermissions({}, { limit: 20 })
@@ -47,12 +38,10 @@ class SingUpContainer extends React.Component {
 
   render() {
     const { permissions } = this.state;
+    const { API } = this.props;
     return (
       <Card style={{ textAlign: 'center' }}>
-        <RegistrationForm
-          onCreate={this.createUsers}
-          permissions={permissions}
-        />
+        <RegistrationForm API={API} permissions={permissions} />
       </Card>
     );
   }

@@ -12,13 +12,15 @@ import AboutContainer from './components/about';
 import ClientContainer from './components/clients';
 import CreateClientContainer from './components/clients/create';
 import UserContainer from './components/users';
+import CreateFeeContainer from './components/fees/create';
 import FeeReportContainer from './components/reports/fees';
 import FeeByDayReportContainer from './components/reports/feesByDay';
 import FeeByDateRangeReportContainer from './components/reports/feesByDateRange';
 import FeeByClientsRangeReportContainer from './components/reports/feesByClient';
+import ClientsByWorkAddressContainer from './components/reports/ClientsByWorkAddress';
+import ClientsOverView from './components/reports/ClientsOverview';
 import SingUpContainer from './components/auth/singup';
 import LoginContainer from './components/auth/login';
-import LogOutContainer from './components/auth/logout';
 
 const API = new AccountantModule({
   baseURL: 'http://localhost:3000/dev',
@@ -27,8 +29,8 @@ const API = new AccountantModule({
 const { Content, Header } = Layout;
 
 export default function App() {
-  const [theme = 'dark', setTheme] = useState();
-  const [user, setUser] = useState();
+  const [theme = 'dark', setTheme] = useState<string>();
+  const [user, setUser] = useState<any>();
 
   const changeTheme = (value) => {
     setTheme(value ? 'dark' : 'light');
@@ -38,7 +40,7 @@ export default function App() {
     return (
       <Router>
         <Layout>
-          <Sidebar theme={theme} />
+          <Sidebar theme={theme} setUser={setUser} user={user} />
           <Layout
             className="site-layout"
             style={{ marginLeft: 200, height: '700px' }}
@@ -83,6 +85,10 @@ export default function App() {
                   component={() => <SingUpContainer API={API} />}
                 />
                 <Route
+                  path="/create-paymets"
+                  component={() => <CreateFeeContainer API={API} user={user} />}
+                />
+                <Route
                   path="/report-payment"
                   component={() => <FeeReportContainer API={API} />}
                 />
@@ -101,8 +107,12 @@ export default function App() {
                   )}
                 />
                 <Route
-                  path="/logout"
-                  component={() => <LogOutContainer setUser={setUser} />}
+                  path="/report-clients-list"
+                  component={() => <ClientsOverView API={API} />}
+                />
+                <Route
+                  path="/report-clients-by-work-address"
+                  component={() => <ClientsByWorkAddressContainer API={API} />}
                 />
               </Switch>
             </Content>

@@ -2,11 +2,17 @@
 /* eslint-disable promise/no-nesting */
 /* eslint-disable promise/always-return */
 import React from 'react';
-import { Table, Input } from 'antd';
+import { Table, Input, Button, Row, Col } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
+import AccountantModule from '@andresmorelos/accountantmodule-sdk';
+import SaveReport from '../../../helpers/saveReports';
 
 const { Search } = Input;
 
-class FeeByDayReportContainer extends React.Component {
+interface Props {
+  API: AccountantModule;
+}
+class FeeByDayReportContainer extends React.Component<Props> {
   _isMounted = false;
 
   constructor(props: any) {
@@ -19,10 +25,13 @@ class FeeByDayReportContainer extends React.Component {
       total: 0,
       loading: true,
       search: {},
+      gte: new Date(),
+      lt: new Date(),
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
     this.onSearch = this.onSearch.bind(this);
+    this.downloadReport = this.downloadReport.bind(this);
   }
 
   componentDidMount() {
@@ -47,6 +56,10 @@ class FeeByDayReportContainer extends React.Component {
           $lt: new Date(endDate).toISOString(),
         },
       };
+      this.setState({
+        gte: search.createdAt.$gte,
+        lt: search.createdAt.$lt,
+      });
     } else {
       search = {};
     }
@@ -116,6 +129,20 @@ class FeeByDayReportContainer extends React.Component {
     });
   }
 
+  downloadReport(event) {
+    const { gte, lt } = this.state;
+    this.props.API.Reports()
+      .getFeeReport({
+        gte,
+        lt,
+        description: `Cobros por día`,
+      })
+      .then((response) => {
+        SaveReport(response, 'cobrosPorDia.pdf');
+      })
+      .catch((err) => console.error(err));
+  }
+
   render() {
     const { fees, loading, total } = this.state;
     const columns = [
@@ -153,13 +180,22 @@ class FeeByDayReportContainer extends React.Component {
 
     return (
       <>
-        <Search
-          type="date"
-          placeholder="Secuencia"
-          onSearch={this.onSearch}
-          enterButton
-          style={{ marginBottom: '5px' }}
-        />
+        <Row>
+          <Col span={22}>
+            <Search
+              type="date"
+              placeholder="Secuencia"
+              onSearch={this.onSearch}
+              enterButton
+              style={{ marginBottom: '5px' }}
+            />
+          </Col>
+          <Col span={1}>
+            <Button icon={<DownloadOutlined />} onClick={this.downloadReport}>
+              Descargar
+            </Button>
+          </Col>
+        </Row>
         <Table
           size="middle"
           columns={columns}
