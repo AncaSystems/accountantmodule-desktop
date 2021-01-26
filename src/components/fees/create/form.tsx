@@ -11,7 +11,9 @@ import {
   notification,
   Select,
   Table,
+  Space,
 } from 'antd';
+import { Link } from 'react-router-dom';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import IClient from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Client.interface';
 
@@ -84,6 +86,7 @@ const RegistrationForm = ({ API, user }: Props) => {
           const client = await API.Clients().getClient(Currentfee.client);
 
           return {
+            id: Currentfee.id,
             seq: Currentfee.seq,
             value: Intl.NumberFormat('es-CO', {
               style: 'currency',
@@ -176,15 +179,18 @@ const RegistrationForm = ({ API, user }: Props) => {
 
           if (response.loans) {
             let payments = 0;
+            response.loans.sort((a, b) => {
+              return a.createdAt - b.createdAt;
+            });
             setLoan(response.loans[response.loans.length - 1].id);
 
             if (response.loans[response.loans.length - 1].fees.length > 0) {
               payments = response.loans[response.loans.length - 1].fees.reduce(
                 (accumulator, _fee) => {
-                   if (_fee._enabled) {
-            return accumulator + _fee.value;
-          }
-          return accumulator;
+                  if (_fee._enabled) {
+                    return accumulator + _fee.value;
+                  }
+                  return accumulator;
                 },
                 0
               );
@@ -244,6 +250,15 @@ const RegistrationForm = ({ API, user }: Props) => {
       title: 'Comisión',
       dataIndex: 'commission',
       key: 'commission',
+    },
+    {
+      title: 'Acciones',
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+          <Link to={`/payments/${record.id}/update`}>Modificar</Link>
+        </Space>
+      ),
     },
   ];
 

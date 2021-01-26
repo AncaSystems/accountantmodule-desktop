@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@andresmorelos/accountantmodule-sdk@1.1.19":
-  version "1.1.19"
-  resolved "https://registry.yarnpkg.com/@andresmorelos/accountantmodule-sdk/-/accountantmodule-sdk-1.1.19.tgz#cae19e9dfd713b728eaa905241bb756b178f4e86"
-  integrity sha512-GBOXuDj/gjxj/Nyjv8gekgGUk3Oaf4FOxYftJm3c3YTv47Hlj6RW/ICh3f64xjxGtLaESvZvbuvXtUxlPwtBuw==
+"@andresmorelos/accountantmodule-sdk@1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@andresmorelos/accountantmodule-sdk/-/accountantmodule-sdk-1.2.5.tgz#1cec22b68ed5ba4b7fbf55d3e70388710b55ad0d"
+  integrity sha512-xkZ00VJXm5J3pSBmkmxo+PO2Gp888EyW+2BEHXp9e8H8soHJoMhV1Xm36vX9N/9OwDoHoMigtuk8oKFKPKHkSQ==
   dependencies:
     axios "^0.21.1"
 
@@ -5413,11 +5413,6 @@ file-loader@^6.0.0:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
-
-file-saver@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
-  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-uri-to-path@1.0.0:
   version "1.0.0"

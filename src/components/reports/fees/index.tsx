@@ -2,7 +2,8 @@
 /* eslint-disable promise/no-nesting */
 /* eslint-disable promise/always-return */
 import React from 'react';
-import { Table, Input } from 'antd';
+import { Link } from 'react-router-dom';
+import { Table, Input, Space } from 'antd';
 
 const { Search } = Input;
 class FeeReportContainer extends React.Component {
@@ -65,6 +66,7 @@ class FeeReportContainer extends React.Component {
           const client = await this.props.API.Clients().getClient(fee.client);
 
           return {
+            id: fee.id,
             seq: fee.seq,
             value: Intl.NumberFormat('es-CO', {
               style: 'currency',
@@ -133,6 +135,15 @@ class FeeReportContainer extends React.Component {
         title: 'Comisión',
         dataIndex: 'commission',
         key: 'commission',
+      },
+      {
+        title: 'Acciones',
+        key: 'action',
+        render: (text, record) => (
+          <Space size="middle">
+            <Link to={`/payments/${record.id}/update`}>Modificar</Link>
+          </Space>
+        ),
       },
     ];
 

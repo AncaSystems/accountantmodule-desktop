@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Select, Button, Row, Col } from 'antd';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import { DownloadOutlined } from '@ant-design/icons';
+import SaveReport from '../../../helpers/saveReports';
 
 const { Option } = Select;
 
@@ -15,6 +16,7 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
   const [value, setValue] = useState<string>();
   const [clients = [], setClients] = useState<any[]>();
   const [loading = false, setLoading] = useState<boolean>();
+  const [loadingButton = false, setLoadingButton] = useState<boolean>();
   const [page = 1, setPage] = useState<number>();
   const [limit = 10, setLimit] = useState<number>();
   const [total = 0, setTotal] = useState<number>();
@@ -31,6 +33,7 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
   }, []);
 
   const mapClientResults = (client: any) => {
+    client.loans.sort((a, b) => a.createdAt - b.createdAt);
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
       let payments = 0;
@@ -106,6 +109,19 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
     setPage(newPage);
     setLimit(pageSize);
     getClients({ currentPage: newPage, currentLimit: pageSize });
+  };
+
+  const downloadReport = (event) => {
+    if (value) {
+      setLoadingButton(true);
+      API.Reports()
+        .getClientsByWork({ work: value })
+        .then((response) => {
+          SaveReport(response, `ClientesPorLugarDeTrabajo-${value}.pdf`);
+          setLoadingButton(false);
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
   const columns = [
@@ -193,7 +209,13 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
           </Select>
         </Col>
         <Col span={1}>
-          <Button icon={<DownloadOutlined />}>Descargar</Button>
+          <Button
+            loading={loadingButton}
+            icon={<DownloadOutlined />}
+            onClick={downloadReport}
+          >
+            Descargar
+          </Button>
         </Col>
       </Row>
 

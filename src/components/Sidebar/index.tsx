@@ -41,7 +41,8 @@ class Sidebar extends React.Component<Props> {
         <Menu
           mode="inline"
           theme={theme}
-          defaultSelectedKeys={['1']}
+          defaultOpenKeys={['about']}
+          defaultSelectedKeys={['14']}
           style={{ height: '100%', borderRight: 0 }}
         >
           {permissionValidation('CREATE_USER', user.permissions) && (
@@ -77,13 +78,8 @@ class Sidebar extends React.Component<Props> {
           {permissionValidation('ASSING_PAYMENT', user.permissions) && (
             <SubMenu icon={<FileDoneOutlined />} title="Cobros">
               <Menu.Item key="3">
-                <Link to="/create-paymets" style={{ fontSize: '0.9em' }}>
+                <Link to="/payments" style={{ fontSize: '0.9em' }}>
                   Registro Cobros
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="4">
-                <Link to="/update-paymets" style={{ fontSize: '0.9em' }}>
-                  Modificar Cobro
                 </Link>
               </Menu.Item>
             </SubMenu>
@@ -167,7 +163,7 @@ class Sidebar extends React.Component<Props> {
             Cerrar Sesión
           </Menu.Item>
 
-          <SubMenu icon={<QuestionOutlined />} title="Ayuda">
+          <SubMenu key="about" icon={<QuestionOutlined />} title="Ayuda">
             <Menu.Item key="14">
               <Link to="/about" style={{ fontSize: '0.9em' }}>
                 Acerca de

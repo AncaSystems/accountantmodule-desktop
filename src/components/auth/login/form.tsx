@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 
 const { Password } = Input;
@@ -22,10 +23,11 @@ interface Props {
 }
 
 const LoginForm = ({ API, setUser }: Props) => {
+  const history = useHistory();
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
-  const [hide = true, setHide ] = useState();
+  const [hide = true, setHide] = useState();
 
   const Login = ({ username, password }) => {
     setDisabled(true);
@@ -37,6 +39,7 @@ const LoginForm = ({ API, setUser }: Props) => {
         setUser(response);
         setDisabled(false);
         setloading(false);
+        history.push('/');
         return undefined;
       })
       .catch((error: any) => {

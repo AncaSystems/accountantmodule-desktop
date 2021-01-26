@@ -60,7 +60,8 @@ const RegistrationForm = ({ API }: Props) => {
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
-  const [valueInput = '0', setValueInput] = useState();
+  const [valueInput = 0, setValueInput] = useState<number>();
+  const [taxValue = 0, setTaxValue] = useState<number>();
   const [loanTypes = [], setLoanTypes] = useState();
 
   useEffect(() => {
@@ -104,7 +105,7 @@ const RegistrationForm = ({ API }: Props) => {
         setloading(false);
         form.resetFields();
         notification.success({
-          message: 'Cliente Creado Exitosamente'
+          message: 'Cliente Creado Exitosamente',
         });
       })
       .catch((error: any) => console.error(error));
@@ -200,11 +201,21 @@ const RegistrationForm = ({ API }: Props) => {
     createClient(values);
   };
 
-  const ParseCurrency = (valueToParse: number) => {
+  const parseToCurrency = (valueToParse: number) => {
     return Intl.NumberFormat('es-CO', {
       style: 'currency',
       currency: 'COP',
     }).format(valueToParse);
+  };
+
+  const calculatePerformanceAndClientValue = (value?: number) => {
+    if (valueInput) {
+      const tax = value !== undefined ? value / 100 : taxValue / 100;
+      const performance = valueInput * tax;
+      return { performance, clientValue: performance + valueInput };
+    }
+
+    return { performance: 0, clientValue: 0 };
   };
 
   return (
@@ -375,7 +386,25 @@ const RegistrationForm = ({ API }: Props) => {
                 },
               ]}
             >
-              <Input type="number" suffix="%" />
+              <Input
+                type="number"
+                suffix="%"
+                min={0}
+                max={10}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setTaxValue(parseInt(event.target.value, 10));
+                  const {
+                    performance,
+                    clientValue,
+                  } = calculatePerformanceAndClientValue(
+                    parseInt(event.target.value, 10)
+                  );
+                  form.setFieldsValue({
+                    performance: parseToCurrency(performance),
+                    client_value: parseToCurrency(clientValue),
+                  });
+                }}
+              />
             </Form.Item>
 
             <Form.Item
@@ -390,18 +419,26 @@ const RegistrationForm = ({ API }: Props) => {
             >
               <Input
                 type="text"
-                prefix="$"
                 value={valueInput}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setValueInput(
-                    ParseCurrency(parseInt(event.target.value, 10))
-                  );
+                  setValueInput(parseInt(event.target.value, 10));
+                }}
+                onBlur={() => {
+                  const {
+                    performance,
+                    clientValue,
+                  } = calculatePerformanceAndClientValue();
+                  form.setFieldsValue({
+                    value: parseToCurrency(valueInput),
+                    performance: parseToCurrency(performance),
+                    client_value: parseToCurrency(clientValue),
+                  });
                 }}
               />
             </Form.Item>
 
             <Form.Item
-              name="rendimiento"
+              name="performance"
               label="Rendimiento"
               rules={[
                 {
@@ -410,7 +447,7 @@ const RegistrationForm = ({ API }: Props) => {
                 },
               ]}
             >
-              <Input type="text" prefix="$" />
+              <Input type="text" disabled />
             </Form.Item>
 
             <Form.Item
@@ -423,7 +460,7 @@ const RegistrationForm = ({ API }: Props) => {
                 },
               ]}
             >
-              <Input type="text" prefix="$" />
+              <Input type="text" disabled />
             </Form.Item>
           </fieldset>
         </Col>

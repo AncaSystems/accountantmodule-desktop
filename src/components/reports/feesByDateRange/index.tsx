@@ -23,6 +23,7 @@ class FeeByDateRangeReportContainer extends React.Component {
       search: {},
       gte: new Date(),
       lt: new Date(),
+      loadingButton: false,
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -125,6 +126,9 @@ class FeeByDateRangeReportContainer extends React.Component {
 
   downloadReport(event) {
     const { gte, lt } = this.state;
+    this.setState({
+      loadingButton: true,
+    });
     this.props.API.Reports()
       .getFeeReport({
         gte,
@@ -133,12 +137,15 @@ class FeeByDateRangeReportContainer extends React.Component {
       })
       .then((response) => {
         SaveReport(response, 'cobrosPorRangoDeFecha.pdf');
+        this.setState({
+          loadingButton: false,
+        });
       })
       .catch((err) => console.error(err));
   }
 
   render() {
-    const { fees, loading, total } = this.state;
+    const { fees, loading, total, loadingButton } = this.state;
     const columns = [
       {
         title: 'Secuencia',
@@ -179,7 +186,11 @@ class FeeByDateRangeReportContainer extends React.Component {
             <RangePicker onChange={this.onSearch} style={{ width: '100%' }} />
           </Col>
           <Col span={1}>
-            <Button icon={<DownloadOutlined />} onClick={this.downloadReport}>
+            <Button
+              icon={<DownloadOutlined />}
+              loading={loadingButton}
+              onClick={this.downloadReport}
+            >
               Descargar
             </Button>
           </Col>

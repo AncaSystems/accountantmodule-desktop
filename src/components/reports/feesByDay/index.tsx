@@ -27,6 +27,7 @@ class FeeByDayReportContainer extends React.Component<Props> {
       search: {},
       gte: new Date(),
       lt: new Date(),
+      loadingButton: false,
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -131,6 +132,9 @@ class FeeByDayReportContainer extends React.Component<Props> {
 
   downloadReport(event) {
     const { gte, lt } = this.state;
+    this.setState({
+      loadingButton: true,
+    });
     this.props.API.Reports()
       .getFeeReport({
         gte,
@@ -139,12 +143,15 @@ class FeeByDayReportContainer extends React.Component<Props> {
       })
       .then((response) => {
         SaveReport(response, 'cobrosPorDia.pdf');
+        this.setState({
+          loadingButton: false,
+        });
       })
       .catch((err) => console.error(err));
   }
 
   render() {
-    const { fees, loading, total } = this.state;
+    const { fees, loading, total, loadingButton } = this.state;
     const columns = [
       {
         title: 'Secuencia',
@@ -191,7 +198,11 @@ class FeeByDayReportContainer extends React.Component<Props> {
             />
           </Col>
           <Col span={1}>
-            <Button icon={<DownloadOutlined />} onClick={this.downloadReport}>
+            <Button
+              icon={<DownloadOutlined />}
+              loading={loadingButton}
+              onClick={this.downloadReport}
+            >
               Descargar
             </Button>
           </Col>

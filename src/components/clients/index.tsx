@@ -77,13 +77,14 @@ class ClientContainer extends React.Component<Props, State> {
 
   // eslint-disable-next-line class-methods-use-this
   mapClientResults(client: any) {
+    client.loans.sort((a, b) => a.createdAt - b.createdAt);
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
       let payments = 0;
 
       if (loan.fees.length > 0) {
         payments = loan.fees.reduce((accumulator: number, _fee: any) => {
-           if (_fee._enabled) {
+          if (_fee._enabled) {
             return accumulator + _fee.value;
           }
           return accumulator;
@@ -200,7 +201,7 @@ class ClientContainer extends React.Component<Props, State> {
         key: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <Link to={`/client/${record.id}/update`}>Modificar</Link>
+            <Link to={`/clients/${record.id}/update`}>Modificar</Link>
             <Button
               type="link"
               onClick={() => {

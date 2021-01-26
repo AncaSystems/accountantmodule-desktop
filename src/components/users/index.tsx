@@ -98,7 +98,7 @@ class UserContainer extends React.Component<Props, State> {
         key: 'action',
         render: (text, record) => (
           <Space size="middle">
-            <Link to={`/user/${record.id}/update`}>Modificar</Link>
+            <Link to={`/users/${record.id}/update`}>Modificar</Link>
             <Button
               type="link"
               onClick={() => {

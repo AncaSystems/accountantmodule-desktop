@@ -11,8 +11,10 @@ import Sidebar from './components/Sidebar';
 import AboutContainer from './components/about';
 import ClientContainer from './components/clients';
 import CreateClientContainer from './components/clients/create';
+import UpdateClientContainer from './components/clients/update';
 import UserContainer from './components/users';
 import CreateFeeContainer from './components/fees/create';
+import UpdateFeeContainer from './components/fees/update';
 import FeeReportContainer from './components/reports/fees';
 import FeeByDayReportContainer from './components/reports/feesByDay';
 import FeeByDateRangeReportContainer from './components/reports/feesByDateRange';
@@ -21,9 +23,11 @@ import ClientsByWorkAddressContainer from './components/reports/ClientsByWorkAdd
 import ClientsOverView from './components/reports/ClientsOverview';
 import SingUpContainer from './components/auth/singup';
 import LoginContainer from './components/auth/login';
+import UpdateUserContainer from './components/users/update';
+import UnderConstructionContainer from './components/UnderConstruction';
 
 const API = new AccountantModule({
-  baseURL: 'http://localhost:3000/dev',
+  baseURL: 'https://31fv7jsjpb.execute-api.us-east-1.amazonaws.com/prod/',
 });
 
 const { Content, Header } = Layout;
@@ -67,50 +71,98 @@ export default function App() {
               }}
             >
               <Switch>
-                <Route path="/about" component={AboutContainer} />
+                <Route exact path="/" component={AboutContainer} />
+                <Route exact path="/about" component={AboutContainer} />
                 <Route
+                  exact
+                  path="/report-status-by-month"
+                  component={UnderConstructionContainer}
+                />
+                <Route
+                  exact
+                  path="/report-balance"
+                  component={UnderConstructionContainer}
+                />
+                <Route
+                  exact
+                  path="/tools-customize"
+                  component={UnderConstructionContainer}
+                />
+                <Route
+                  exact
+                  path="/users/:user/update"
+                  render={({ match }) => (
+                    <UpdateUserContainer API={API} match={match} />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/clients/:client/update"
+                  render={({ match }) => (
+                    <UpdateClientContainer API={API} match={match} />
+                  )}
+                />
+                <Route
+                  exact
                   path="/clients"
                   component={() => <ClientContainer API={API} />}
                 />
                 <Route
+                  exact
                   path="/clients-register"
                   component={() => <CreateClientContainer API={API} />}
                 />
                 <Route
+                  exact
                   path="/users"
                   component={() => <UserContainer API={API} />}
                 />
                 <Route
+                  exact
                   path="/create-users"
                   component={() => <SingUpContainer API={API} />}
                 />
                 <Route
-                  path="/create-paymets"
+                  exact
+                  path="/payments/:fee/update"
+                  render={({ match }) => (
+                    <UpdateFeeContainer API={API} match={match} />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/payments"
                   component={() => <CreateFeeContainer API={API} user={user} />}
                 />
                 <Route
+                  exact
                   path="/report-payment"
                   component={() => <FeeReportContainer API={API} />}
                 />
                 <Route
+                  exact
                   path="/report-payment-by-day"
                   component={() => <FeeByDayReportContainer API={API} />}
                 />
                 <Route
+                  exact
                   path="/report-payment-by-day-range"
                   component={() => <FeeByDateRangeReportContainer API={API} />}
                 />
                 <Route
+                  exact
                   path="/report-payment-by-client"
                   component={() => (
                     <FeeByClientsRangeReportContainer API={API} />
                   )}
                 />
                 <Route
+                  exact
                   path="/report-clients-list"
                   component={() => <ClientsOverView API={API} />}
                 />
                 <Route
+                  exact
                   path="/report-clients-by-work-address"
                   component={() => <ClientsByWorkAddressContainer API={API} />}
                 />
@@ -121,5 +173,10 @@ export default function App() {
       </Router>
     );
   }
-  return <LoginContainer API={API} setUser={setUser} />;
+  return (
+    <Router>
+      {' '}
+      <LoginContainer API={API} setUser={setUser} />{' '}
+    </Router>
+  );
 }

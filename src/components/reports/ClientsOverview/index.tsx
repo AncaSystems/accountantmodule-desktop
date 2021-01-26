@@ -15,6 +15,7 @@ interface State {
   limit: number;
   total: number;
   loading: boolean;
+  loadingButton: boolean;
 }
 class ClientContainer extends React.Component<Props, State> {
   _isMounted = false;
@@ -28,6 +29,7 @@ class ClientContainer extends React.Component<Props, State> {
       limit: 10,
       total: 0,
       loading: true,
+      loadingButton: false,
     };
 
     this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -77,6 +79,7 @@ class ClientContainer extends React.Component<Props, State> {
 
   // eslint-disable-next-line class-methods-use-this
   mapClientResults(client: any) {
+    client.loans.sort((a, b) => a.createdAt - b.createdAt);
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
       let payments = 0;
@@ -150,16 +153,22 @@ class ClientContainer extends React.Component<Props, State> {
   }
 
   downloadReport(event) {
+    this.setState({
+      loadingButton: true,
+    });
     this.props.API.Reports()
       .getClientsOverview()
       .then((response) => {
         SaveReport(response, 'ListadoDeClientes.pdf');
+        this.setState({
+          loadingButton: false,
+        });
       })
       .catch((err) => console.error(err));
   }
 
   render() {
-    const { clients, loading, total } = this.state;
+    const { clients, loading, total, loadingButton } = this.state;
     const { API } = this.props;
     const columns = [
       {
@@ -221,7 +230,13 @@ class ClientContainer extends React.Component<Props, State> {
 
     return (
       <>
-        <Button icon={<DownloadOutlined />} onClick={this.downloadReport}>Descargar</Button>
+        <Button
+          icon={<DownloadOutlined />}
+          loading={loadingButton}
+          onClick={this.downloadReport}
+        >
+          Descargar
+        </Button>
         <Table
           size="middle"
           columns={columns}

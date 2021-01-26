@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'antd';
 import PackageInfo from '../../package.json';
 
 class AboutContainer extends React.Component {
@@ -18,7 +19,7 @@ class AboutContainer extends React.Component {
         <h2>{`DMD Remanufacturados v${PackageInfo.version}`}</h2>
         <br />
         <p>
-          Created Created with ♥ by{' '}
+          Created Created by{' '}
           <a className="js-external-link" href="https://andresmorelos.dev">
             Andres Morelos
           </a>
@@ -27,8 +28,14 @@ class AboutContainer extends React.Component {
             className="js-external-link"
             href="https://github.com/AndresMorelos"
           >
-            Github Profile
+            Portafolio
           </a>
+          <br />
+          <br />
+          <Button danger href="mailto:me@andresmorelos.dev">
+            {' '}
+            Reportar un error{' '}
+          </Button>
         </p>
       </div>
     );
