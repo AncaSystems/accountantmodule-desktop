@@ -95,7 +95,7 @@ const RegistrationForm = ({ API }: Props) => {
       .createLoan(client, {
         since,
         tax,
-        value,
+        value: valueInput,
         loanType,
         month,
         year,
@@ -280,7 +280,7 @@ const RegistrationForm = ({ API }: Props) => {
               rules={[
                 {
                   type: 'string',
-                  required: false,
+                  required: true,
                   message: 'Por favor ingrese una dirección!',
                 },
               ]}
@@ -292,7 +292,7 @@ const RegistrationForm = ({ API }: Props) => {
               name="phone"
               label="Telefono"
               rules={[
-                { required: false, message: 'Por favor ingrese un telefono!' },
+                { required: true, message: 'Por favor ingrese un telefono!' },
               ]}
             >
               <Input />

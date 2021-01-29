@@ -77,48 +77,50 @@ class ClientContainer extends React.Component<Props, State> {
 
   // eslint-disable-next-line class-methods-use-this
   mapClientResults(client: any) {
-    client.loans.sort((a, b) => a.createdAt - b.createdAt);
-    const loan = client.loans[client.loans.length - 1];
-    if (loan) {
-      let payments = 0;
+    if (client.loans) {
+      client.loans.sort((a, b) => a.createdAt - b.createdAt);
+      const loan = client.loans[client.loans.length - 1];
+      if (loan) {
+        let payments = 0;
 
-      if (loan.fees.length > 0) {
-        payments = loan.fees.reduce((accumulator: number, _fee: any) => {
-          if (_fee._enabled) {
-            return accumulator + _fee.value;
-          }
-          return accumulator;
-        }, 0);
+        if (loan.fees.length > 0) {
+          payments = loan.fees.reduce((accumulator: number, _fee: any) => {
+            if (_fee._enabled) {
+              return accumulator + _fee.value;
+            }
+            return accumulator;
+          }, 0);
+        }
+
+        const seed = loan.value - payments;
+
+        return {
+          id: client.id,
+          name: client.name,
+          work: client.work,
+          phone: client.phone,
+          active: client._enabled ? 'Sí' : 'No',
+          enabled: client._enabled,
+          loanDate: new Date(loan.since).toLocaleDateString(),
+          paymentType: loan.loanType.name,
+          seed: Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+          }).format(seed),
+          seedValue: seed,
+          performance: Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+          }).format(seed * (loan.tax / 100)),
+          value: Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+          }).format(seed + seed * (loan.tax / 100)),
+          codebtName: client.CoDebtName,
+          codebtAddress: client.CoDebtAddress,
+          codebtPhone: client.CoDebtPhone,
+        };
       }
-
-      const seed = loan.value - payments;
-
-      return {
-        id: client.id,
-        name: client.name,
-        work: client.work,
-        phone: client.phone,
-        active: client._enabled ? 'Sí' : 'No',
-        enabled: client._enabled,
-        loanDate: new Date(loan.since).toLocaleDateString(),
-        paymentType: loan.loanType.name,
-        seed: Intl.NumberFormat('es-CO', {
-          style: 'currency',
-          currency: 'COP',
-        }).format(seed),
-        seedValue: seed,
-        performance: Intl.NumberFormat('es-CO', {
-          style: 'currency',
-          currency: 'COP',
-        }).format(seed * (loan.tax / 100)),
-        value: Intl.NumberFormat('es-CO', {
-          style: 'currency',
-          currency: 'COP',
-        }).format(seed + seed * (loan.tax / 100)),
-        codebtName: client.CoDebtName,
-        codebtAddress: client.CoDebtAddress,
-        codebtPhone: client.CoDebtPhone,
-      };
     }
   }
 
