@@ -3,6 +3,7 @@ import React from 'react';
 import { Table, Input, Space, Button, notification } from 'antd';
 import { Link } from 'react-router-dom';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
+import getMonthNumber from '../../utils/getMonthNumber';
 
 const { Search } = Input;
 
@@ -78,7 +79,25 @@ class ClientContainer extends React.Component<Props, State> {
   // eslint-disable-next-line class-methods-use-this
   mapClientResults(client: any) {
     if (client.loans) {
-      client.loans.sort((a, b) => a.createdAt - b.createdAt);
+      client.loans = client.loans.map((_loan: ILoan) =>
+        Object.assign(_loan, {
+          month: getMonthNumber(_loan.month),
+          year: parseInt(_loan.year, 10),
+        })
+      );
+
+      client.loans.sort((a, b) => {
+        if (a.year === b.year) {
+          return a.year - b.year;
+        }
+        if (a.year > b.year) {
+          return 1;
+        }
+        if (a.year < b.year) {
+          return -1;
+        }
+      });
+
       const loan = client.loans[client.loans.length - 1];
       if (loan) {
         let payments = 0;
