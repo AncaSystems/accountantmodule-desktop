@@ -3,7 +3,9 @@ import React from 'react';
 import { Table, Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
+import ILoan from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Loan.interface';
 import SaveReport from '../../../helpers/saveReports';
+import getMonthNumber from '../../../utils/getMonthNumber';
 
 interface Props {
   API: AccountantModule;
@@ -69,7 +71,9 @@ class ClientContainer extends React.Component<Props, State> {
       .getClients(search, { page, limit })
       .then((response) => {
         this.setState({
-          clients: response.results.map(this.mapClientResults),
+          clients: response.results
+            .map(this.mapClientResults)
+            .filter((client) => client?.originalSeed > 0),
           total: response.totalResults,
           loading: false,
         });
@@ -79,7 +83,25 @@ class ClientContainer extends React.Component<Props, State> {
 
   // eslint-disable-next-line class-methods-use-this
   mapClientResults(client: any) {
-    client.loans.sort((a, b) => a.createdAt - b.createdAt);
+    client.loans = client.loans.map((_loan: ILoan) =>
+      Object.assign(_loan, {
+        month: getMonthNumber(_loan.month),
+        year: parseInt(_loan.year, 10),
+      })
+    );
+
+    client.loans.sort((a, b) => {
+      if (a.year === b.year) {
+        return a.year - b.year;
+      }
+      if (a.year > b.year) {
+        return 1;
+      }
+      if (a.year < b.year) {
+        return -1;
+      }
+    });
+
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
       let payments = 0;
@@ -116,6 +138,7 @@ class ClientContainer extends React.Component<Props, State> {
         name: client.name,
         phone: client.phone,
         loanDate: new Date(loan.since).toLocaleDateString(),
+        originalSeed: loan.value,
         seed: Intl.NumberFormat('es-CO', {
           style: 'currency',
           currency: 'COP',
