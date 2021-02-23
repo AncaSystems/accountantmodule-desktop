@@ -3,9 +3,8 @@ import React from 'react';
 import { Table, Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
-import ILoan from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Loan.interface';
 import SaveReport from '../../../helpers/saveReports';
-import getMonthNumber from '../../../utils/getMonthNumber';
+import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 interface Props {
   API: AccountantModule;
@@ -83,24 +82,10 @@ class ClientContainer extends React.Component<Props, State> {
 
   // eslint-disable-next-line class-methods-use-this
   mapClientResults(client: any) {
-    client.loans = client.loans.map((_loan: ILoan) =>
-      Object.assign(_loan, {
-        month: getMonthNumber(_loan.month),
-        year: parseInt(_loan.year, 10),
-      })
+    const { month, year } = getMonthAndYear();
+    client.loans = client.loans.filter(
+      (_loan) => _loan.month === month && _loan.year === year.toString()
     );
-
-    client.loans.sort((a, b) => {
-      if (a.year === b.year) {
-        return a.year - b.year;
-      }
-      if (a.year > b.year) {
-        return 1;
-      }
-      if (a.year < b.year) {
-        return -1;
-      }
-    });
 
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
