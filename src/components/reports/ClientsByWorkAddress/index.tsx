@@ -4,6 +4,7 @@ import { Table, Select, Button, Row, Col } from 'antd';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import { DownloadOutlined } from '@ant-design/icons';
 import SaveReport from '../../../helpers/saveReports';
+import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 const { Option } = Select;
 
@@ -33,7 +34,11 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
   }, []);
 
   const mapClientResults = (client: any) => {
-    client.loans.sort((a, b) => a.createdAt - b.createdAt);
+    const { month, year } = getMonthAndYear();
+    client.loans = client.loans.filter(
+      (_loan) => _loan.month === month && _loan.year === year.toString()
+    );
+
     const loan = client.loans[client.loans.length - 1];
     if (loan) {
       let payments = 0;
