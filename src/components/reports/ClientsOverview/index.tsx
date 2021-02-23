@@ -96,8 +96,7 @@ class ClientContainer extends React.Component<Props, State> {
       let value2 = 0;
 
       if (loan.fees.length > 0) {
-        loan.fees = loan.fees.filter((fee) => fee._enabled);
-        payments = loan.fees.reduce((accumulator, _fee) => {
+        payments = loan.fees.reduce((accumulator: number, _fee: any) => {
           if (_fee._enabled) {
             return accumulator + _fee.value;
           }
@@ -105,7 +104,18 @@ class ClientContainer extends React.Component<Props, State> {
         }, 0);
       }
 
-      const seed = loan.value - payments;
+      let seed = loan.value - payments;
+
+      if (seed < 0) {
+        seed = 0.0;
+      }
+      const performance = seed * (loan.tax / 100);
+
+      let clientValue = loan.value * (loan.tax / 100) + seed;
+
+      if (clientValue <= 0 || (performance <= 0 && loan.tax > 0)) {
+        clientValue = 0.0;
+      }
 
       if (Array.isArray(loan.fees) && loan.fees.length === 1) {
         seq1 = loan.fees[0].seq;
@@ -131,11 +141,11 @@ class ClientContainer extends React.Component<Props, State> {
         performance: Intl.NumberFormat('es-CO', {
           style: 'currency',
           currency: 'COP',
-        }).format(seed * (loan.tax / 100)),
+        }).format(performance),
         value: Intl.NumberFormat('es-CO', {
           style: 'currency',
           currency: 'COP',
-        }).format(seed + seed * (loan.tax / 100)),
+        }).format(clientValue),
         seq1,
         fee1: Intl.NumberFormat('es-CO', {
           style: 'currency',

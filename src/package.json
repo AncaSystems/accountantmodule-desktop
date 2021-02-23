@@ -1,7 +1,7 @@
 {
   "name": "accountant-module",
   "productName": "accountant-module",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "DMD Remanufacturados",
   "main": "./main.prod.js",
   "author": {

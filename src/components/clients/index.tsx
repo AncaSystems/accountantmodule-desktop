@@ -68,7 +68,9 @@ class ClientContainer extends React.Component<Props, State> {
       .getClients(search, { page, limit })
       .then((response) => {
         this.setState({
-          clients: response.results.map(this.mapClientResults),
+          clients: response.results
+            .map(this.mapClientResults)
+            .filter((client) => client !== undefined),
           total: response.totalResults,
           loading: false,
         });
@@ -97,7 +99,18 @@ class ClientContainer extends React.Component<Props, State> {
           }, 0);
         }
 
-        const seed = loan.value - payments;
+        let seed = loan.value - payments;
+
+        if (seed < 0) {
+          seed = 0.0;
+        }
+        const performance = seed * (loan.tax / 100);
+
+        let clientValue = loan.value * (loan.tax / 100) + seed;
+
+        if (clientValue <= 0 || (performance <= 0 && loan.tax > 0)) {
+          clientValue = 0.0;
+        }
 
         return {
           id: client.id,
@@ -116,11 +129,11 @@ class ClientContainer extends React.Component<Props, State> {
           performance: Intl.NumberFormat('es-CO', {
             style: 'currency',
             currency: 'COP',
-          }).format(seed * (loan.tax / 100)),
+          }).format(performance),
           value: Intl.NumberFormat('es-CO', {
             style: 'currency',
             currency: 'COP',
-          }).format(seed + seed * (loan.tax / 100)),
+          }).format(clientValue),
           codebtName: client.CoDebtName,
           codebtAddress: client.CoDebtAddress,
           codebtPhone: client.CoDebtPhone,
@@ -206,39 +219,41 @@ class ClientContainer extends React.Component<Props, State> {
       {
         title: 'Acciones',
         key: 'action',
-        render: (text, record) => (
-          <Space size="middle">
-            <Link to={`/clients/${record.id}/update`}>Modificar</Link>
-            <Button
-              type="link"
-              onClick={() => {
-                if (!record.enabled) {
-                  notification.info({
-                    message: 'No se pudo eliminar el cliente',
-                    description: 'El cliente no se encuentra activo.',
-                  });
-                  return;
-                }
-                if (record.seedValue === 0) {
-                  API.Clients()
-                    .deleteClient(record.id)
-                    .then((result) => {
-                      this.getClients({});
-                    })
-                    .catch((err) => console.error(err));
-                } else {
-                  notification.error({
-                    message: 'No se pudo eliminar el cliente',
-                    description:
-                      'La semilla del cliente deber ser igual a cero ($ 0,00) para poder ser eliminado.',
-                  });
-                }
-              }}
-            >
-              Eliminar
-            </Button>
-          </Space>
-        ),
+        render: (text, record) => {
+          return (
+            <Space size="middle">
+              <Link to={`/clients/${record.id}/update`}>Modificar</Link>
+              <Button
+                type="link"
+                onClick={() => {
+                  if (!record.enabled) {
+                    notification.info({
+                      message: 'No se pudo eliminar el cliente',
+                      description: 'El cliente no se encuentra activo.',
+                    });
+                    return;
+                  }
+                  if (record.seedValue === 0) {
+                    API.Clients()
+                      .deleteClient(record.id)
+                      .then((result) => {
+                        this.getClients({});
+                      })
+                      .catch((err) => console.error(err));
+                  } else {
+                    notification.error({
+                      message: 'No se pudo eliminar el cliente',
+                      description:
+                        'La semilla del cliente deber ser igual a cero ($ 0,00) para poder ser eliminado.',
+                    });
+                  }
+                }}
+              >
+                Eliminar
+              </Button>
+            </Space>
+          );
+        },
       },
     ];
 
