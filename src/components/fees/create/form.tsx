@@ -16,6 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import IClient from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Client.interface';
+import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 interface Props {
   API: AccountantModule;
@@ -173,20 +174,26 @@ const RegistrationForm = ({ API, user }: Props) => {
       .getClient(id)
       .then((response) => {
         if (response) {
-          let loanValue = 0;
+          let seed = 0;
           let performance = 0;
+          let clientValue = 0;
           let tax = 0;
 
           if (response.loans) {
             let payments = 0;
-            response.loans.sort((a, b) => {
-              return a.createdAt - b.createdAt;
-            });
-            setLoan(response.loans[response.loans.length - 1].id);
 
-            if (response.loans[response.loans.length - 1].fees.length > 0) {
-              payments = response.loans[response.loans.length - 1].fees.reduce(
-                (accumulator, _fee) => {
+            const { month, year } = getMonthAndYear();
+            response.loans = response.loans.filter(
+              (_loan) => _loan.month === month && _loan.year === year.toString()
+            );
+
+            const lastLoan = response.loans[response.loans.length - 1];
+
+            setLoan(lastLoan.id);
+
+            if (lastLoan.fees.length > 0) {
+              payments = lastLoan.fees.reduce(
+                (accumulator: number, _fee: any) => {
                   if (_fee._enabled) {
                     return accumulator + _fee.value;
                   }
@@ -196,18 +203,26 @@ const RegistrationForm = ({ API, user }: Props) => {
               );
             }
 
-            loanValue =
-              response.loans[response.loans.length - 1].value - payments;
-            performance =
-              loanValue * (response.loans[response.loans.length - 1].tax / 100);
+            seed = lastLoan.value - payments;
 
-            tax = response.loans[response.loans.length - 1].loanType.tax;
+            if (seed < 0) {
+              seed = 0.0;
+            }
+            performance = seed * (lastLoan.tax / 100);
+
+            clientValue = lastLoan.value * (lastLoan.tax / 100) + seed;
+
+            if (clientValue <= 0 || (performance <= 0 && lastLoan.tax > 0)) {
+              clientValue = 0.0;
+            }
+
+            tax = lastLoan.loanType.tax;
           }
 
           form.setFieldsValue({
-            seed: parseToCurrency(loanValue),
+            seed: parseToCurrency(seed),
             performance: parseToCurrency(performance),
-            clientValue: parseToCurrency(loanValue + performance),
+            clientValue: parseToCurrency(clientValue),
             commission: parseToCurrency(performance * (tax / 100)),
             loanType: response.loans[response.loans.length - 1].loanType.name,
           });
