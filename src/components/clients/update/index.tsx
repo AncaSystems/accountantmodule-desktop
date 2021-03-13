@@ -15,6 +15,7 @@ import { useHistory } from 'react-router-dom';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import ILoanType from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/LoanType.interface';
 import IClient from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Client.interface';
+import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 const { Option } = Select;
 
@@ -48,7 +49,7 @@ interface Props {
 }
 
 const UpdateContainer = ({ API, match }: Props) => {
-  let history = useHistory();
+  const history = useHistory();
   const [client, setClient] = useState<IClient>();
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
@@ -174,7 +175,6 @@ const UpdateContainer = ({ API, match }: Props) => {
     seed?: number,
     value?: number
   ) => {
-    console.log('VALUE INPUT', value);
     if (valueInput || seed) {
       const tax = value !== undefined ? value / 100 : taxValue / 100;
       const performance = seed !== undefined ? seed * tax : valueInput * tax;
@@ -192,6 +192,10 @@ const UpdateContainer = ({ API, match }: Props) => {
     API.Clients()
       .getClient(match.params.client)
       .then((responseClient) => {
+        const { month, year } = getMonthAndYear();
+        responseClient.loans = responseClient.loans.filter(
+          (_loan) => _loan.month === month && _loan.year === year.toString()
+        );
         setClient(responseClient);
         setValueInput(
           responseClient.loans[responseClient.loans.length - 1].value
