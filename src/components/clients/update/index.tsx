@@ -111,8 +111,6 @@ const UpdateContainer = ({ API, match }: Props) => {
     tax,
     value,
     loanType,
-    month,
-    year,
   }: {
     identification: string;
     name: string;
@@ -143,13 +141,17 @@ const UpdateContainer = ({ API, match }: Props) => {
         _enabled,
       })
       .then((response: any) => {
+        const { month, year } = getMonthAndYear();
+        response.loans = response.loans.filter(
+          (_loan) => _loan.month === month && _loan.year === year.toString()
+        );
         updateLoan(response.loans[response.loans.length - 1].id, {
           since,
           tax,
           value,
           loanType,
           month,
-          year,
+          year: year.toString(),
         });
       })
       .catch((error: any) => {
@@ -200,6 +202,7 @@ const UpdateContainer = ({ API, match }: Props) => {
         setValueInput(
           responseClient.loans[responseClient.loans.length - 1].value
         );
+        setTaxValue(responseClient.loans[responseClient.loans.length - 1].tax);
         const { performance, clientValue } = calculatePerformanceAndClientValue(
           responseClient.loans[responseClient.loans.length - 1].value,
           responseClient.loans[responseClient.loans.length - 1].tax
