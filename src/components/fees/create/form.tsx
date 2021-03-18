@@ -212,6 +212,10 @@ const RegistrationForm = ({ API, user }: Props) => {
 
             clientValue = lastLoan.value * (lastLoan.tax / 100) + seed;
 
+            if (seed === 0.0) {
+              clientValue = lastLoan.value + clientValue - payments;
+            }
+
             tax = lastLoan.loanType.tax;
           }
 
