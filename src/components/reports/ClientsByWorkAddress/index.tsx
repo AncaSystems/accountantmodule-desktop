@@ -59,11 +59,7 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
       }
       const performance = seed * (loan.tax / 100);
 
-      let clientValue = loan.value * (loan.tax / 100) + seed;
-
-      if (clientValue <= 0 || (performance <= 0 && loan.tax > 0)) {
-        clientValue = 0.0;
-      }
+      const clientValue = loan.value * (loan.tax / 100) + seed;
 
       return {
         id: client.id,

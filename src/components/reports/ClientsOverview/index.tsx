@@ -111,11 +111,7 @@ class ClientContainer extends React.Component<Props, State> {
       }
       const performance = seed * (loan.tax / 100);
 
-      let clientValue = loan.value * (loan.tax / 100) + seed;
-
-      if (clientValue <= 0 || (performance <= 0 && loan.tax > 0)) {
-        clientValue = 0.0;
-      }
+      const clientValue = loan.value * (loan.tax / 100) + seed;
 
       if (Array.isArray(loan.fees) && loan.fees.length === 1) {
         seq1 = loan.fees[0].seq;
