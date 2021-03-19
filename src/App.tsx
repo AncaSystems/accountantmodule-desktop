@@ -24,6 +24,7 @@ import ClientsOverView from './components/reports/ClientsOverview';
 import SingUpContainer from './components/auth/singup';
 import LoginContainer from './components/auth/login';
 import UpdateUserContainer from './components/users/update';
+import TotalBalanceContainer from './components/reports/totalBalance';
 import UnderConstructionContainer from './components/UnderConstruction';
 
 const API = new AccountantModule({
@@ -81,7 +82,7 @@ export default function App() {
                 <Route
                   exact
                   path="/report-balance"
-                  component={UnderConstructionContainer}
+                  component={() => <TotalBalanceContainer API={API} />}
                 />
                 <Route
                   exact
