@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@andresmorelos/accountantmodule-sdk@1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@andresmorelos/accountantmodule-sdk/-/accountantmodule-sdk-1.2.5.tgz#1cec22b68ed5ba4b7fbf55d3e70388710b55ad0d"
-  integrity sha512-xkZ00VJXm5J3pSBmkmxo+PO2Gp888EyW+2BEHXp9e8H8soHJoMhV1Xm36vX9N/9OwDoHoMigtuk8oKFKPKHkSQ==
+"@andresmorelos/accountantmodule-sdk@1.2.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@andresmorelos/accountantmodule-sdk/-/accountantmodule-sdk-1.2.6.tgz#b48aab719c086501ca2676c5e065a837517d212b"
+  integrity sha512-Fu7zNUeEDoZUi2LSntgdaEQiVZCnJ7LSt6IEAFpJD589PYc4ZMJBgzScsrZqZY537iZjdDQ4Q3MmSuRJmKoY7A==
   dependencies:
     axios "^0.21.1"
 
