@@ -28,7 +28,7 @@ import TotalBalanceContainer from './components/reports/totalBalance';
 import UnderConstructionContainer from './components/UnderConstruction';
 
 const API = new AccountantModule({
-  baseURL: 'https://31fv7jsjpb.execute-api.us-east-1.amazonaws.com/prod/',
+  baseURL: 'https://fl3ps34j2e.execute-api.us-east-1.amazonaws.com/prod/',
 });
 
 const { Content, Header } = Layout;
