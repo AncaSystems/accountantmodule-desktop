@@ -15,9 +15,9 @@ const monthNames = [
 const getMonthAndYear = () => {
   const since = new Date();
   let month = monthNames[since.getMonth()];
-  const day = since.getDay();
+  const day = since.getDate();
 
-  if (day > 27) {
+  if (day >= 27) {
     if (month !== 'Diciembre') {
       month = monthNames[since.getMonth() + 1];
     } else {
