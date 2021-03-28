@@ -26,6 +26,7 @@ import LoginContainer from './components/auth/login';
 import UpdateUserContainer from './components/users/update';
 import TotalBalanceContainer from './components/reports/totalBalance';
 import UnderConstructionContainer from './components/UnderConstruction';
+import BackupConfigNotifierContainer from './components/Configs/Backup';
 
 const API = new AccountantModule({
   baseURL: 'https://fl3ps34j2e.execute-api.us-east-1.amazonaws.com/prod/',
@@ -37,7 +38,7 @@ export default function App() {
   const [theme = 'dark', setTheme] = useState<string>();
   const [user, setUser] = useState<any>();
 
-  const changeTheme = (value) => {
+  const changeTheme = (value: number) => {
     setTheme(value ? 'dark' : 'light');
   };
 
@@ -58,7 +59,11 @@ export default function App() {
                 <Col offset={1}>
                   <h3>DMD Remanufacturados</h3>
                 </Col>
-                <Col span={6} offset={11}>
+                <Col offset={1}>
+                  <b>Backup En Progreso:</b>{' '}
+                  <BackupConfigNotifierContainer API={API} />
+                </Col>
+                <Col span={6} offset={10}>
                   <SwitchTheme onChange={changeTheme} />
                 </Col>
               </Row>
