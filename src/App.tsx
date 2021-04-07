@@ -27,6 +27,8 @@ import UpdateUserContainer from './components/users/update';
 import TotalBalanceContainer from './components/reports/totalBalance';
 import UnderConstructionContainer from './components/UnderConstruction';
 import BackupConfigNotifierContainer from './components/Configs/Backup';
+import PersonalizeContainer from './components/Configs/Personalize';
+import PersonalizeUpateContainer from './components/Configs/Personalize/update';
 
 const API = new AccountantModule({
   baseURL: 'https://fl3ps34j2e.execute-api.us-east-1.amazonaws.com/prod/',
@@ -92,8 +94,16 @@ export default function App() {
                 <Route
                   exact
                   path="/tools-customize"
-                  component={UnderConstructionContainer}
+                  component={() => <PersonalizeContainer API={API} />}
                 />
+                <Route
+                  exact
+                  path="/tools-customize/:loanTypeId/:name/:tax/update"
+                  component={({ match }) => (
+                    <PersonalizeUpateContainer API={API} match={match} />
+                  )}
+                />
+
                 <Route
                   exact
                   path="/users/:user/update"
@@ -181,8 +191,7 @@ export default function App() {
   }
   return (
     <Router>
-      {' '}
-      <LoginContainer API={API} setUser={setUser} />{' '}
+      <LoginContainer API={API} setUser={setUser} />
     </Router>
   );
 }

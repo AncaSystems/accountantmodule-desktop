@@ -25,3 +25,7 @@
 .hide {
   display: none;
 }
+
+.update-form-button {
+  margin-left: 40vh;
+}
