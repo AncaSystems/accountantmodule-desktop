@@ -21,11 +21,12 @@ import FeeByDateRangeReportContainer from './components/reports/feesByDateRange'
 import FeeByClientsRangeReportContainer from './components/reports/feesByClient';
 import ClientsByWorkAddressContainer from './components/reports/ClientsByWorkAddress';
 import ClientsOverView from './components/reports/ClientsOverview';
+import ClientOverviewByMonthAndYearContainer from './components/reports/ClientsOverviewByMonthAndYear';
 import SingUpContainer from './components/auth/singup';
 import LoginContainer from './components/auth/login';
 import UpdateUserContainer from './components/users/update';
 import TotalBalanceContainer from './components/reports/totalBalance';
-import UnderConstructionContainer from './components/UnderConstruction';
+// import UnderConstructionContainer from './components/UnderConstruction';
 import BackupConfigNotifierContainer from './components/Configs/Backup';
 import PersonalizeContainer from './components/Configs/Personalize';
 import PersonalizeUpateContainer from './components/Configs/Personalize/update';
@@ -84,7 +85,9 @@ export default function App() {
                 <Route
                   exact
                   path="/report-status-by-month"
-                  component={UnderConstructionContainer}
+                  component={() => (
+                    <ClientOverviewByMonthAndYearContainer API={API} />
+                  )}
                 />
                 <Route
                   exact
