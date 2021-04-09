@@ -61,6 +61,7 @@ const RegistrationForm = ({ API, user }: Props) => {
   const [feesTotal = 0, setFeesTotal] = useState<number>();
   const [fee, setFee] = useState<number>();
   const [loan, setLoan] = useState<string>();
+  const [sequence, setSequence] = useState<number>(0);
 
   const getSearch = () => {
     const startDate = new Date().setHours(0, 0, 0);
@@ -120,10 +121,19 @@ const RegistrationForm = ({ API, user }: Props) => {
   };
 
   useEffect(() => {
-    API.Clients()
-      .getClients({}, { limit: 1000 })
-      .then((reponse) => {
-        setClients(reponse.results);
+    API.Counter()
+      .getCounter('FeeCounter')
+      .then((response) => {
+        setSequence(response.seq + 1);
+        form.setFieldsValue({
+          sequence: response.seq + 1
+        });
+        API.Clients()
+          .getClients({}, { limit: 1000 })
+          .then((reponse) => {
+            setClients(reponse.results);
+          })
+          .catch((err) => console.error(err));
       })
       .catch((err) => console.error(err));
 
@@ -142,6 +152,10 @@ const RegistrationForm = ({ API, user }: Props) => {
           setDisabled(false);
           setloading(false);
           form.resetFields();
+          form.setFieldsValue({
+            sequence: sequence + 1,
+          });
+          setSequence(sequence + 1);
           getFees({});
         })
         .catch((err) => {
@@ -291,6 +305,19 @@ const RegistrationForm = ({ API, user }: Props) => {
           <Col span={10} offset={1}>
             <fieldset>
               <legend>Datos Cobro</legend>
+              <Form.Item
+                name="sequence"
+                label={<span>Secuencia</span>}
+                rules={[
+                  {
+                    required: false,
+                  },
+                ]}
+                initialValue={sequence}
+              >
+                <Input disabled />
+              </Form.Item>
+
               <Form.Item
                 name="client"
                 label={<span>Cliente</span>}
