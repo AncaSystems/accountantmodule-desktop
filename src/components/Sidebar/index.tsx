@@ -121,6 +121,14 @@ class Sidebar extends React.Component<Props> {
                   Clientes por lugar de trabajo
                 </Link>
               </Menu.Item>
+              <Menu.Item key="18">
+                <Link
+                  to="/report-clients-without-paymets"
+                  style={{ fontSize: '0.9em' }}
+                >
+                  Clientes sin pagos
+                </Link>
+              </Menu.Item>
             </SubMenu>
           )}
 

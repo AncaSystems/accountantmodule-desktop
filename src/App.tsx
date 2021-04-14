@@ -26,10 +26,11 @@ import SingUpContainer from './components/auth/singup';
 import LoginContainer from './components/auth/login';
 import UpdateUserContainer from './components/users/update';
 import TotalBalanceContainer from './components/reports/totalBalance';
-// import UnderConstructionContainer from './components/UnderConstruction';
 import BackupConfigNotifierContainer from './components/Configs/Backup';
 import PersonalizeContainer from './components/Configs/Personalize';
 import PersonalizeUpateContainer from './components/Configs/Personalize/update';
+import ClientsWitouthPaymentsContainer from './components/reports/ClientsWitoutPayments';
+import UnderConstructionContainer from './components/UnderConstruction';
 
 const API = new AccountantModule({
   baseURL: 'https://fl3ps34j2e.execute-api.us-east-1.amazonaws.com/prod/',
@@ -106,7 +107,6 @@ export default function App() {
                     <PersonalizeUpateContainer API={API} match={match} />
                   )}
                 />
-
                 <Route
                   exact
                   path="/users/:user/update"
@@ -173,6 +173,13 @@ export default function App() {
                   path="/report-payment-by-client"
                   component={() => (
                     <FeeByClientsRangeReportContainer API={API} />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/report-clients-without-paymets"
+                  component={() => (
+                    <ClientsWitouthPaymentsContainer API={API} />
                   )}
                 />
                 <Route
