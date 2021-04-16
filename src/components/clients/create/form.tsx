@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import { Moment } from 'moment';
+import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 interface Props {
   API: AccountantModule;
@@ -44,19 +45,7 @@ const tailFormItemLayout = {
 };
 
 const RegistrationForm = ({ API }: Props) => {
-  const monthNames = [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre',
-  ];
+
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
@@ -172,27 +161,11 @@ const RegistrationForm = ({ API }: Props) => {
       });
   };
 
-  const getMonthAndYear = (since: Moment) => {
-    let month = monthNames[since.month()];
-    const day = since.day();
-
-    if (day > 27) {
-      if (month !== 'Diciembre') {
-        month = monthNames[since.month() + 1];
-      } else {
-        // eslint-disable-next-line prefer-destructuring
-        month = monthNames[0]; // Enero
-      }
-    }
-
-    return { month, year: since.year() };
-  };
-
   const onFinish = (values: any) => {
     setDisabled(true);
     setloading(true);
     const { since } = values;
-    const { month, year } = getMonthAndYear(since);
+    const { month, year } = getMonthAndYear();
     values = {
       ...values,
       month,
