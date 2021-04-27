@@ -162,7 +162,7 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
       key: 'active',
     },
     {
-      title: 'Fecha Prestamo',
+      title: 'Fecha Credito',
       dataIndex: 'loanDate',
       key: 'loanDate',
     },
