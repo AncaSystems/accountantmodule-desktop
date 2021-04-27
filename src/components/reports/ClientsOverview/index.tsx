@@ -205,7 +205,7 @@ class ClientContainer extends React.Component<Props, State> {
         key: 'phone',
       },
       {
-        title: 'Fecha Prestamo',
+        title: 'Fecha Credito',
         dataIndex: 'loanDate',
         key: 'loanDate',
       },

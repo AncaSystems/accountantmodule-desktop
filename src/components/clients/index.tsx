@@ -178,7 +178,7 @@ class ClientContainer extends React.Component<Props, State> {
         key: 'active',
       },
       {
-        title: 'Fecha Prestamo',
+        title: 'Fecha Credito',
         dataIndex: 'loanDate',
         key: 'loanDate',
       },
