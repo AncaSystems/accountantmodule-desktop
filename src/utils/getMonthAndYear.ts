@@ -17,8 +17,9 @@ const getMonthAndYear = () => {
   const since = new Date();
   let month = monthNames[since.getMonth()];
   const day = since.getDate();
+  const hours = since.getHours();
 
-  if (day >= 27) {
+  if (day >= 27 && hours >= 23) {
     if (month !== 'Diciembre') {
       month = monthNames[since.getMonth() + 1];
     } else {
