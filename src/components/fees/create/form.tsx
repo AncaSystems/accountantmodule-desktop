@@ -64,8 +64,10 @@ const RegistrationForm = ({ API, user }: Props) => {
   const [sequence, setSequence] = useState<number>(0);
 
   const getSearch = () => {
-    const startDate = new Date().setHours(0, 0, 0);
-    const endDate = new Date(startDate + 60 * 60 * 24 * 1000);
+    const today = new Date().setHours(0, 0, 0);
+    const startDate = new Date(today - 60 * 60 * 5 * 1000);
+    const endDate = new Date(today + 60 * 60 * 19 * 1000);
+
     return {
       createdAt: {
         $gte: new Date(startDate).toISOString(),
