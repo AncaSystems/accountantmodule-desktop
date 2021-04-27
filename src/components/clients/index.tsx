@@ -82,6 +82,7 @@ class ClientContainer extends React.Component<Props, State> {
   mapClientResults(client: any) {
     if (client.loans) {
       const { month, year } = getMonthAndYear();
+
       client.loans = client.loans.filter(
         (_loan) => _loan.month === month && _loan.year === year.toString()
       );
