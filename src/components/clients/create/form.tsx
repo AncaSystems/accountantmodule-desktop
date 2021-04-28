@@ -9,6 +9,7 @@ import {
   DatePicker,
   Select,
   notification,
+  AutoComplete,
 } from 'antd';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import { Moment } from 'moment';
@@ -16,6 +17,10 @@ import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 interface Props {
   API: AccountantModule;
+}
+
+interface OptionType {
+  value: string;
 }
 
 const { Option } = Select;
@@ -45,13 +50,27 @@ const tailFormItemLayout = {
 };
 
 const RegistrationForm = ({ API }: Props) => {
-
   const [form] = Form.useForm();
   const [disabled = false, setDisabled] = useState();
   const [loading = false, setloading] = useState();
   const [valueInput = 0, setValueInput] = useState<number>();
   const [taxValue = 0, setTaxValue] = useState<number>();
   const [loanTypes = [], setLoanTypes] = useState();
+  const [autoCompletOptionsName, setAutoCompleteOptionsName] = useState<
+    OptionType[]
+  >([]);
+  const [
+    validAutoCompletOptionsName,
+    setValidAutoCompletOptionsName,
+  ] = useState<OptionType[]>([]);
+  const [
+    autoCompletOptionsIdentification,
+    setAutoCompleteOptionsIdentification,
+  ] = useState<OptionType[]>([]);
+  const [
+    validAutoCompletOptionsIdentification,
+    setValidAutoCompletOptionsIdentification,
+  ] = useState<OptionType[]>([]);
 
   useEffect(() => {
     API.LoanTypes()
@@ -60,6 +79,30 @@ const RegistrationForm = ({ API }: Props) => {
         setLoanTypes(reponse.results);
       })
       .catch((err) => console.error(err));
+
+    API.Clients()
+      .getDistinct('name')
+      .then((response) => {
+        const options = response.map((name: string) => {
+          return { value: name };
+        });
+        setAutoCompleteOptionsName(options);
+
+        return null;
+      })
+      .catch((error) => console.error(error));
+
+    API.Clients()
+      .getDistinct('identification')
+      .then((response) => {
+        const options = response.map((identification: string) => {
+          return { value: identification };
+        });
+        setAutoCompleteOptionsIdentification(options);
+
+        return null;
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   const createLoan = (
@@ -161,6 +204,20 @@ const RegistrationForm = ({ API }: Props) => {
       });
   };
 
+  const autoCompletOnSearchName = (value: string) => {
+    const validOptions = autoCompletOptionsName.filter(
+      (option) => option.value.indexOf(value.toUpperCase()) >= 0
+    );
+    setValidAutoCompletOptionsName(validOptions);
+  };
+
+  const autoCompletOnSearchIdentification = (value: string) => {
+    const validOptions = autoCompletOptionsIdentification.filter(
+      (option) => option.value.indexOf(value.toUpperCase()) >= 0
+    );
+    setValidAutoCompletOptionsIdentification(validOptions);
+  };
+
   const onFinish = (values: any) => {
     setDisabled(true);
     setloading(true);
@@ -216,7 +273,10 @@ const RegistrationForm = ({ API }: Props) => {
                 },
               ]}
             >
-              <Input />
+              <AutoComplete
+                options={validAutoCompletOptionsIdentification}
+                onSearch={autoCompletOnSearchIdentification}
+              />
             </Form.Item>
 
             <Form.Item
@@ -230,7 +290,10 @@ const RegistrationForm = ({ API }: Props) => {
                 },
               ]}
             >
-              <Input />
+              <AutoComplete
+                options={validAutoCompletOptionsName}
+                onSearch={autoCompletOnSearchName}
+              />
             </Form.Item>
 
             <Form.Item
