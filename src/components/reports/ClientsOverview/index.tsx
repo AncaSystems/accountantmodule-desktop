@@ -220,7 +220,7 @@ class ClientContainer extends React.Component<Props, State> {
         key: 'performance',
       },
       {
-        title: 'Valor Cliente',
+        title: 'Saldo Cliente',
         dataIndex: 'value',
         key: 'value',
       },

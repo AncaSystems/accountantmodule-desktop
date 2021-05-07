@@ -62,7 +62,7 @@ const TotalBalance = ({ API }: Props) => {
           <b>Rendimiento:</b> {parseCurrency(totalBalance.totalPerformance)}
         </p>
         <p>
-          <b>Valor Cliente:</b> {parseCurrency(totalBalance.totalClientValue)}
+          <b>Saldo Cliente:</b> {parseCurrency(totalBalance.totalClientValue)}
         </p>
         <p>
           <b>Pagos Recibidos:</b> {parseCurrency(totalBalance.totalPayments)}
