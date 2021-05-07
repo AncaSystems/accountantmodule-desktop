@@ -478,7 +478,7 @@ const UpdateContainer = ({ API, match }: Props) => {
 
               <Form.Item
                 name="client_value"
-                label="Valor Cliente"
+                label="Saldo Cliente"
                 rules={[
                   {
                     required: false,

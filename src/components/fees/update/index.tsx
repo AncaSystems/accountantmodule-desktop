@@ -80,6 +80,33 @@ const UpdateFeeContainer = ({ API, match }: Props) => {
                   _loan.month === month && _loan.year === year.toString()
               );
 
+              const loan = clientResult.loans[clientResult.loans.length - 1];
+
+              let payments = 0;
+
+              if (loan.fees.length > 0) {
+                payments = loan.fees.reduce(
+                  (accumulator: number, _fee: any) => {
+                    // eslint-disable-next-line no-underscore-dangle
+                    if (_fee._enabled) {
+                      return accumulator + _fee.value;
+                    }
+                    return accumulator;
+                  },
+                  0
+                );
+              }
+
+              const seed = loan.value - payments;
+
+              const performance = seed * (loan.tax / 100);
+
+              let clientValue = loan.value * (loan.tax / 100) + seed;
+
+              if (seed === 0.0) {
+                clientValue = loan.value + clientValue - payments;
+              }
+
               setClient(clientResult);
               form.setFieldsValue({
                 _enabled: feeResult._enabled,
@@ -91,9 +118,9 @@ const UpdateFeeContainer = ({ API, match }: Props) => {
                 loanType:
                   clientResult.loans[clientResult.loans.length - 1].loanType
                     .name,
-                seed: parseToCurrency(
-                  clientResult.loans[clientResult.loans.length - 1].value
-                ),
+                seed: parseToCurrency(seed),
+                performance: parseToCurrency(performance),
+                clientValue: parseToCurrency(clientValue),
               });
             })
             .catch((err) => console.error(err));
@@ -291,7 +318,7 @@ const UpdateFeeContainer = ({ API, match }: Props) => {
 
               <Form.Item
                 name="clientValue"
-                label="Valor Cliente"
+                label="Saldo Cliente"
                 rules={[
                   {
                     required: false,

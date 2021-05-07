@@ -182,7 +182,7 @@ const ClientsByWorkAddressContainer = ({ API }: Props) => {
       key: 'performance',
     },
     {
-      title: 'Valor Cliente',
+      title: 'Saldo Cliente',
       dataIndex: 'value',
       key: 'value',
     },

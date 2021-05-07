@@ -458,7 +458,7 @@ const RegistrationForm = ({ API, user }: Props) => {
 
               <Form.Item
                 name="clientValue"
-                label="Valor Cliente"
+                label="Saldo Cliente"
                 rules={[
                   {
                     required: false,
