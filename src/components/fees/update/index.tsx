@@ -16,6 +16,7 @@ import { useHistory } from 'react-router-dom';
 import AccountantModule from '@andresmorelos/accountantmodule-sdk';
 import IFee from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Fee.inteface';
 import IClient from '@andresmorelos/accountantmodule-sdk/dist/interfaces/Entities/Client.interface';
+import getMonthAndYear from '../../../utils/getMonthAndYear';
 
 const { Option } = Select;
 
@@ -72,6 +73,13 @@ const UpdateFeeContainer = ({ API, match }: Props) => {
           API.Clients()
             .getClient(feeResult.client)
             .then((clientResult) => {
+              const { month, year } = getMonthAndYear();
+
+              clientResult.loans = clientResult.loans.filter(
+                (_loan) =>
+                  _loan.month === month && _loan.year === year.toString()
+              );
+
               setClient(clientResult);
               form.setFieldsValue({
                 _enabled: feeResult._enabled,
@@ -237,7 +245,7 @@ const UpdateFeeContainer = ({ API, match }: Props) => {
 
               <Form.Item
                 name="_enabled"
-                label="Cancelado"
+                label="Cancelar"
                 valuePropName="checked"
                 initialValue={false}
               >
