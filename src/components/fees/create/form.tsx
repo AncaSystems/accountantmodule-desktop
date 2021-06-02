@@ -128,14 +128,15 @@ const RegistrationForm = ({ API, user }: Props) => {
       .then((response) => {
         setSequence(response.seq + 1);
         form.setFieldsValue({
-          sequence: response.seq + 1
+          sequence: response.seq + 1,
         });
-        API.Clients()
-          .getClients({}, { limit: 1000 })
-          .then((reponse) => {
-            setClients(reponse.results);
-          })
-          .catch((err) => console.error(err));
+      })
+      .catch((err) => console.error(err));
+
+    API.Clients()
+      .getClients({}, { limit: 1000 })
+      .then((reponse) => {
+        setClients(reponse.results);
       })
       .catch((err) => console.error(err));
 

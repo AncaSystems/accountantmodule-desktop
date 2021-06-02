@@ -16,7 +16,7 @@ const monthNames = [
 const getMonthAndYear = () => {
   const since = new Date();
   let month = monthNames[since.getMonth()];
-  const day = since.getDate();
+  let day = since.getDate();
   const hours = since.getHours();
 
   if (day > 27 || (day = 27 && hours > 23)) {
